@@ -4,6 +4,7 @@ import numpy as np
 from .file_paths import FilePaths
 from .data_creators import DataCreator
 from .utils.voxels_utils import xyz_to_zxy_arr
+#TODO maybe user decides which format gets saved and which is created on the fly.
 
 
 

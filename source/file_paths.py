@@ -12,5 +12,7 @@ class FilePaths:
         self.two_d_y:str = None
         self.two_d_z:str = None
         self.two_d:str = None
+
+        self.voxels_mask_raw:str = None
         self.mesh_raw:str = None
         self.pcd_raw:str = None

@@ -23,6 +23,9 @@ class DataCreator:
 
     
 
+
+
+
 class DicomDataCreator(DataCreator):
     def __init__(self, source_path:str, name:str, hirarchy_levels:int) -> None:
         super().__init__(source_path, name, hirarchy_levels)
@@ -43,18 +46,30 @@ class DicomDataCreator(DataCreator):
 class XYZArrDataCreator(DataCreator):
     def __init__(self, source_path:str, name:str, hirarchy_levels:int) -> None:
         super().__init__(source_path, name, hirarchy_levels)
-        self.default_filename = "xyz_arr"
+        self.default_filename = "xyz_arr_raw"
     
-    def get_xyz_arr_from_dicom(self, dicom_dir, target_root_dir):
+    def get_xyz_arr_from_dicom(self, dicom_dir):
         xyz_arr = dicom_utils.images_to_3d_arr(dicom_dir, int(self.name))
         return xyz_arr
 
-    def add_sample(self, target_root_dir, file_paths:FilePaths):
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths):
         super().add_sample(target_root_dir)
-        xyz_arr = self.get_xyz_arr_from_dicom(file_paths.dicom_dir, target_root_dir)#, file_paths)
+        xyz_arr = self.get_xyz_arr_from_dicom(file_paths.dicom_dir)
         self.arr_path = os.path.join(target_root_dir, self.name, self.default_top_foldername, self.default_filename + ".npy")
         np.save(self.arr_path, xyz_arr)
         file_paths.xyz_arr = self.arr_path
+        return file_paths
+
+class VoxelsMaskDataCreator(DataCreator):
+    def __init__(self, source_path:str, name:str, hirarchy_levels:int) -> None:
+        super().__init__(source_path, name, hirarchy_levels)
+        self.default_filename = "voxels_mask_raw"
+    
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths):
+        super().add_sample(target_root_dir)
+        self.arr_path = os.path.join(target_root_dir, self.name, self.default_top_foldername, self.default_filename + ".npy")
+        shutil.copy2(self.source_path, self.arr_path)
+        file_paths.voxels_mask_raw = self.arr_path
         return file_paths
 
 
