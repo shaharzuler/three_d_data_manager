@@ -1,22 +1,10 @@
 import os
 import numpy as np
 
-from data_creators import DataCreator
-from three_d_data_manager.source.utils.voxels_utils import xyz_to_zxy_arr
+from .file_paths import FilePaths
+from .data_creators import DataCreator
+from .utils.voxels_utils import xyz_to_zxy_arr
 
-
-#todo make dataclass
-class FilePaths:
-    def __init__(self) -> None:
-        self.dicom = None
-        self.xyz_arr = None
-        self.zxy_arr = None
-        self.two_d_x = None
-        self.two_d_y = None
-        self.two_d_z = None
-        self.two_d = None
-        self.mesh_raw = None
-        self.pcd_raw = None
 
 
 class Dataset:
