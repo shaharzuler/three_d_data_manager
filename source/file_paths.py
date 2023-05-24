@@ -1,7 +1,9 @@
 #todo make dataclass
-from ast import List
+from typing import List
+from dataclasses import dataclass
 
 
+@dataclass
 class FilePaths:
     def __init__(self) -> None:
         self.dicom_dir:str = None
@@ -17,5 +19,7 @@ class FilePaths:
         self.xyz_voxels_mask_raw:str = None
         self.xyz_voxels_mask_smooth:str = None
 
-        self.mesh_raw:str = None
+        self.mesh:str = None
+        self.mesh_smooth:str = None
+        self.lbo_data:str = None
         self.pcd_raw:str = None

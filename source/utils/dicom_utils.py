@@ -35,7 +35,7 @@ def _slices_to_3d_arr(slices, pixel_spacing, slice_thickness):
         img3d[:, :, i] = s.pixel_array
     return img3d, voxel_size
 
-def get_voxel_size(slice_path): #assuming all sloces has same voxel dim
+def get_voxel_size(slice_path): #assuming all slices has same voxel size
     slice = pydicom.dcmread(slice_path)
     pixel_spacing = slice.PixelSpacing
     slice_thickness = slice.SliceThickness

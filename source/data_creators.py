@@ -3,13 +3,16 @@ from distutils.dir_util import copy_tree
 from typing import Dict
 import numpy as np
 from three_d_data_manager.source.utils import voxels_utils
+from three_d_data_manager.source.utils.LBO_utils import LBOcalc
+from three_d_data_manager.source.utils.visualisation_utils import visualize_grid_of_lbo
 from .file_paths import FilePaths
-from .utils import dicom_utils, os_utils
+from .utils import dicom_utils, os_utils, mesh_utils
 import shutil
 from dataclasses import asdict
 import scipy.ndimage
 
 #TODO all creations only if doesnt exist
+#TODO call visualization args for 2d dicom. visualize_grid_of_lbos etc
 
 class DataCreator:
     def __init__(self, source_path, name:str, hirarchy_levels:int) -> None:
@@ -19,14 +22,14 @@ class DataCreator:
         self.default_top_foldername:str = "orig"
         # TODO add automatically creation of 2d image self.create_2d_img = create_2d_img
 
-    def add_sample(self, target_root_dir:str, dataset_attrs:Dict[str,str]):
+    def add_sample(self, target_root_dir:str, creation_args, dataset_attrs:Dict[str,str]):
         if self.hirarchy_levels>2:
             self.sample_dir = os.path.join(target_root_dir, self.name, *([self.default_top_foldername]*self.hirarchy_levels))
         else: 
             self.sample_dir = os.path.join(target_root_dir, self.name, self.default_top_foldername)
         os.makedirs(self.sample_dir, exist_ok=True)
 
-    def add_sample_from_file(self, file, target_root_dir:str, file_paths:FilePaths, args, dataset_attrs:Dict[str,str]):
+    def add_sample_from_file(self, file, target_root_dir:str, file_paths:FilePaths, creation_args, dataset_attrs:Dict[str,str]):
         raise NotImplementedError
 
     def get_properties(self) -> Dict[str, any]:
@@ -44,8 +47,8 @@ class DicomDataCreator(DataCreator):
         # super().__init__(source_path, name, hirarchy_levels)
         self.default_filename = "DICOM"
     
-    def add_sample(self, target_root_dir, file_paths:FilePaths, dataset_attrs:Dict[str,str]):
-        super().add_sample(target_root_dir, dataset_attrs)
+    def add_sample(self, target_root_dir, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None):
+        super().add_sample(target_root_dir, creation_args, dataset_attrs)
         self.dicom_dir = os.path.join(self.sample_dir, self.default_filename)
         os.makedirs(self.dicom_dir, exist_ok=True)
         dicom_source_file_paths = dicom_utils.get_filepaths_by_img_num(self.source_path, int(self.name))
@@ -74,8 +77,8 @@ class XYZArrDataCreator(DataCreator):
         self.xyz_arr = dicom_utils.images_to_3d_arr(dicom_dir, int(self.name))
         return self.xyz_arr
 
-    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:Dict[str,str]):
-        super().add_sample(target_root_dir, dataset_attrs)
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None):
+        super().add_sample(target_root_dir, creation_args, dataset_attrs)
         xyz_arr = self.get_xyz_arr_from_dicom(file_paths.dicom_dir)
         self.arr_path = os.path.join(target_root_dir, self.name, self.default_top_foldername, self.default_filename + ".npy")
         np.save(self.arr_path, xyz_arr)
@@ -94,8 +97,8 @@ class XYZVoxelsMaskDataCreator(DataCreator):
         self.default_filename = "xyz_voxels_mask_raw"
         self.file = file
     
-    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:Dict[str,str]):
-        super().add_sample(target_root_dir, dataset_attrs)
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None):
+        super().add_sample(target_root_dir, creation_args, dataset_attrs)
         self.arr_path = os.path.join(target_root_dir, self.name, self.default_top_foldername, self.default_filename + ".npy")
         if "voxel_size" in dataset_attrs:
             voxel_size_zxy = dataset_attrs["voxel_size"]
@@ -107,9 +110,9 @@ class XYZVoxelsMaskDataCreator(DataCreator):
         file_paths.zxy_voxels_mask_raw = self.arr_path
         return file_paths
 
-    def add_sample_from_file(self, file:np.array, target_root_dir:str, file_paths:FilePaths, args, dataset_attrs:Dict[str,str]) -> FilePaths:
+    def add_sample_from_file(self, file:np.array, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None) -> FilePaths:
         
-        super().add_sample(target_root_dir, dataset_attrs)
+        super().add_sample(target_root_dir, creation_args, dataset_attrs)
         target_folder_path = os.path.join(target_root_dir, self.name, self.default_top_foldername)
         self.arr_path = os.path.join(target_folder_path, self.default_filename + ".npy")
         np.save(self.arr_path, file)
@@ -122,8 +125,8 @@ class ZXYVoxelsMaskDataCreator(DataCreator):
         super().__init__(source_path, name, hirarchy_levels)
         self.default_filename = "zxy_voxels_mask_raw"
     
-    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:Dict[str,any]):
-        super().add_sample(target_root_dir, dataset_attrs)
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None):
+        super().add_sample(target_root_dir, creation_args, dataset_attrs)
         self.arr_path = os.path.join(target_root_dir, self.name, self.default_top_foldername, self.default_filename + ".npy")
         arr = np.load(self.source_path)
         if voxels_utils.zxy_to_xyz(arr).shape != dataset_attrs["shape"]:
@@ -141,15 +144,69 @@ class SmoothVoxelsMaskDataCreator(DataCreator):
         self.default_filename = "xyz_voxels_mask_smooth"
         self.file = file
     
-    def add_sample_from_file(self, file:np.array, target_root_dir:str, file_paths:FilePaths, args, dataset_attrs:Dict[str,str]) -> FilePaths:
-        super().add_sample(target_root_dir, dataset_attrs)
+    def add_sample_from_file(self, file:np.array, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None) -> FilePaths:
+        super().add_sample(target_root_dir, creation_args, dataset_attrs)
         target_folder_path = os.path.join(target_root_dir, self.name, self.default_top_foldername)
         self.arr_path = os.path.join(target_folder_path, self.default_filename + ".npy")
         np.save(self.arr_path, file)
         file_paths.xyz_voxels_mask_smooth = self.arr_path
 
-        os_utils.write_config_file(target_folder_path, self.default_filename, asdict(args)) 
+        os_utils.write_config_file(target_folder_path, self.default_filename, asdict(creation_args)) 
         return file_paths
+
+class MeshDataCreator(DataCreator):
+    def __init__(self, source_path:str, name:str, hirarchy_levels:int, file=None) -> None:
+        super().__init__(source_path, name, hirarchy_levels)
+        self.default_filename = "mesh"
+        self.file = file
+    
+    def add_sample_from_file(self, file:np.array, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None) -> FilePaths:
+        super().add_sample(target_root_dir, creation_args, dataset_attrs)
+        target_folder_path = os.path.join(target_root_dir, self.name, self.default_top_foldername)
+        self.mesh_path = os.path.join(target_folder_path, self.default_filename + ".off")
+        verts, faces = file
+        mesh_utils.write_off(self.mesh_path, verts, faces)
+        file_paths.mesh = self.mesh_path
+
+        # os_utils.write_config_file(target_folder_path, self.default_filename, asdict(args)) #TODO add voxels start index
+        return file_paths
+
+class SmoothLBOMeshDataCreator(DataCreator):
+    def __init__(self, source_path:str, name:str, hirarchy_levels:int) -> None:
+        super().__init__(source_path, name, hirarchy_levels)
+        self.default_filename = "smooth_mesh"
+    
+
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None):
+        super().add_sample(target_root_dir, creation_args, dataset_attrs)
+
+        verts, faces = mesh_utils.read_off(file_paths.mesh)
+        smooth_verts, faces = self.smooth_with_lbo(creation_args, verts, faces)
+
+        target_folder_path = os.path.join(target_root_dir, self.name, self.default_top_foldername)
+        self.smooth_mesh_path = os.path.join(target_folder_path, self.default_filename + ".off")
+        mesh_utils.write_off(self.smooth_mesh_path, smooth_verts, faces)
+        self.lbo_data_path =  os.path.join(target_folder_path, "lbo_data.npz")
+        np.savez(self.lbo_data_path, eigenvectors=self.eigenvectors, eigenvalues=self.eigenvalues, area_weights=self.area_weights)
+        
+        file_paths.mesh_smooth = self.smooth_mesh_path
+        file_paths.lbo_data = self.lbo_data_path
+
+        os_utils.write_config_file(target_folder_path, self.default_filename, asdict(creation_args)) 
+
+        return file_paths
+
+   
+    def smooth_with_lbo(self, lbo_creation_args, verts, faces):
+        LBO = LBOcalc(k=lbo_creation_args.num_LBOs, use_torch=lbo_creation_args.use_torch, is_point_cloud=lbo_creation_args.is_point_cloud)
+        self.eigenvectors, self.eigenvalues, self.area_weights = LBO.get_LBOs(verts, faces)
+        # the following is to reduce dim in the LBO space (verts*eigenvects*eigenvects^-1) :
+        projected = np.dot(verts.transpose(), self.eigenvectors[0,:,:])
+        eigenvects_pinv = np.linalg.pinv(self.eigenvectors[0,:,:])
+        smooth_verts = np.dot(projected, eigenvects_pinv).transpose() 
+        return smooth_verts, faces
+
+
 
 
 

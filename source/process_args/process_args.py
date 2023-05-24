@@ -31,13 +31,20 @@ class VoxelSmoothingArgs:#(Logable):
     opening_footprint_radius: int
     fill_holes_Area_threshold: int
     closing_to_opening_ratio: float
-    show: bool = False
+    # show: bool = False
 
 @dataclass
 class MeshSmoothingArgs:#(Logable):
+    marching_cubes_step_size: int
+    # convexify_method = None #TODO
+    
+
+@dataclass
+class LBOArgs:#(Logable):
     num_LBOs: int
-    max_smooth_lbo_mesh_visualization: int = 6
-    marching_cubes_step_size: int = 1
-    convexify_method = None #TODO
-    show: bool = False
+    is_point_cloud: bool
+    max_smooth_lbo_mesh_visualization: int
+    use_torch: bool = True # use_torch=False function is buggy
+
+
     
