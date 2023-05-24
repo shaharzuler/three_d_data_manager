@@ -57,6 +57,10 @@ class Dataset:
     def get_smooth_mesh(self) -> np.array:
         mesh_smooth = read_off(self.file_paths.mesh_smooth)    
         return mesh_smooth
+
+    def get_convex_mesh(self) -> np.array:
+        mesh_convex = read_off(self.file_paths.mesh_convex)    
+        return mesh_convex
     
     def get_lbo_data(self) -> Tuple[np.array, np.array, np.array]:
         lbo_data = np.load(self.file_paths.lbo_data)    

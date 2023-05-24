@@ -22,4 +22,5 @@ class FilePaths:
         self.mesh:str = None
         self.mesh_smooth:str = None
         self.lbo_data:str = None
+        self.mesh_convex:str = None
         self.pcd_raw:str = None

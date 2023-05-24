@@ -11,3 +11,4 @@ tqdm==4.65.0
 xvfbwrapper==0.2.9
 plotly==5.14.1
 matplotlib==3.7.1
+open3d==0.17.0

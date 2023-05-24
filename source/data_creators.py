@@ -10,6 +10,7 @@ from .utils import dicom_utils, os_utils, mesh_utils
 import shutil
 from dataclasses import asdict
 import scipy.ndimage
+import open3d as o3d
 
 #TODO all creations only if doesnt exist
 #TODO call visualization args for 2d dicom. visualize_grid_of_lbos etc
@@ -209,4 +210,30 @@ class SmoothLBOMeshDataCreator(DataCreator):
 
 
 
+class ConvexMeshDataCreator(DataCreator):
+    def __init__(self, source_path:str, name:str, hirarchy_levels:int) -> None:
+        super().__init__(source_path, name, hirarchy_levels)
+        self.default_filename = "convex_mesh"
+    
 
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None):
+        super().add_sample(target_root_dir, creation_args, dataset_attrs)
+
+        verts, faces = mesh_utils.read_off(file_paths.mesh_smooth)
+        convex_verts, convex_faces = self.convexify(verts)
+
+        target_folder_path = os.path.join(target_root_dir, self.name, self.default_top_foldername) #TODO as 1 func for base class? prepare paths first for check if file exists?
+        self.convex_mesh_path = os.path.join(target_folder_path, self.default_filename + ".off")
+        mesh_utils.write_off(self.convex_mesh_path, convex_verts, convex_faces)
+        
+        file_paths.mesh_convex = self.convex_mesh_path
+
+        return file_paths
+
+    def convexify(self, vertices):
+        pcd = o3d.geometry.PointCloud()
+        pcd.points = o3d.utility.Vector3dVector(vertices)
+        convex_hull, orig_pcd_point_indices = pcd.compute_convex_hull()
+        verts_convex_hull = np.asarray(convex_hull.vertices).astype(np.float32)
+        faces_convex_hull = np.asarray(convex_hull.triangles).astype(np.int64)
+        return verts_convex_hull, faces_convex_hull
