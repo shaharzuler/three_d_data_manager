@@ -47,4 +47,6 @@ class LBOArgs:#(Logable):
     use_torch: bool = True # use_torch=False function is buggy
 
 
-    
+@dataclass
+class VoxelizingArgs:
+    mesh_path: str

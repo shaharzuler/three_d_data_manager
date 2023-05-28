@@ -5,6 +5,7 @@ import numpy as np
 from three_d_data_manager.source.utils import voxels_utils
 from three_d_data_manager.source.utils.LBO_utils import LBOcalc
 from three_d_data_manager.source.utils.visualisation_utils import visualize_grid_of_lbo
+from three_d_data_manager.source.utils.voxels_mesh_conversions_utils import Mesh2VoxelsConvertor
 from .file_paths import FilePaths
 from .utils import dicom_utils, os_utils, mesh_utils
 import shutil
@@ -237,3 +238,22 @@ class ConvexMeshDataCreator(DataCreator):
         verts_convex_hull = np.asarray(convex_hull.vertices).astype(np.float32)
         faces_convex_hull = np.asarray(convex_hull.triangles).astype(np.int64)
         return verts_convex_hull, faces_convex_hull
+
+class VoxelizedMeshDataCreator(DataCreator):
+    def __init__(self, source_path:str, name:str, hirarchy_levels:int) -> None:
+        super().__init__(source_path, name, hirarchy_levels)
+        self.default_filename = "_voxelized"
+
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None):
+        super().add_sample(target_root_dir, creation_args, dataset_attrs)
+        mesh_filename = creation_args.mesh_path.split("/")[-1].split(".off")[0]
+        voxelized = Mesh2VoxelsConvertor(creation_args.mesh_path, dataset_attrs["shape"]).padded_voxelized
+
+        self.voxelized_mesh_path = os.path.join(target_root_dir, self.name, self.default_top_foldername, mesh_filename + self.default_filename + ".npy")
+        np.save(self.voxelized_mesh_path, voxelized)
+        setattr(file_paths, mesh_filename + self.default_filename, self.voxelized_mesh_path)
+
+        return file_paths
+
+    
+

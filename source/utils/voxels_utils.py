@@ -34,11 +34,5 @@ def voxel_smoothing(masks_arr:np.array, opening_footprint_radius:int, closing_to
     smooth_masks_arr = morphology.opening(closed_masks_arr, footprint)  
     return smooth_masks_arr
 
-def voxels_mask_to_mesh(voxels_mask:np.array, marching_cubes_step_size:int):
-    verts, faces, normals, values = measure.marching_cubes(
-        voxels_mask,
-        gradient_direction="descent",
-        step_size=marching_cubes_step_size, 
-        allow_degenerate=False) 
-    return verts, faces, normals, values
+
 

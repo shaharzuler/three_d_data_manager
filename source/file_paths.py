@@ -1,4 +1,3 @@
-#todo make dataclass
 from typing import List
 from dataclasses import dataclass
 
@@ -24,3 +23,6 @@ class FilePaths:
         self.lbo_data:str = None
         self.mesh_convex:str = None
         self.pcd_raw:str = None
+
+        self.smooth_mesh_voxels:str = None
+        self.convex_mesh_voxels:str = None

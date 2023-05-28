@@ -67,6 +67,17 @@ class Dataset:
         eigenvectors, eigenvalues, area_weights = lbo_data["eigenvectors"], lbo_data["eigenvalues"], lbo_data["area_weights"], 
         return eigenvectors, eigenvalues, area_weights
     
+    def get_voxelized_smooth_mesh(self) -> np.array:
+        voxels_smooth_mesh = np.load(self.file_paths.smooth_mesh_voxelized)    
+        return voxels_smooth_mesh
+
+    def get_voxelized_convex_mesh(self) -> np.array:
+        voxels_convex_mesh = np.load(self.file_paths.convex_mesh_voxelized)    
+        return voxels_convex_mesh
+
+    def visualize_existing_data(self):
+        pass
+        # 3 sections, 3 sections with mask, and smoothed mask, 3d plotly of mesh(es), section with all masks, lbos
 
 
         
