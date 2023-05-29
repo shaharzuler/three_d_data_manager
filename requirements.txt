@@ -14,3 +14,4 @@ matplotlib==3.7.1
 open3d==0.17.0
 pyvista==0.39.1
 meshio==5.3.4
+opencv-python==4.7.0.72

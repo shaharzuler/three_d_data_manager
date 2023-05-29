@@ -1,12 +1,15 @@
 import os
 from typing import Tuple
+
 import numpy as np
-from three_d_data_manager.source.utils.mesh_utils import read_off
-from three_d_data_manager.source.utils.voxels_utils import xyz_to_zxy
+import cv2
+from PIL import Image
 
 from .file_paths import FilePaths
 from .data_creators import DataCreator
-#TODO maybe user decides which format gets saved and which is created on the fly.
+from .utils import mesh_utils, voxels_utils, visualization_utils 
+
+#TODO maybe user desides which format gets saved and which is created on the fly.
 
 
 
@@ -43,7 +46,7 @@ class Dataset:
 
     def get_zxy_arr(self) -> np.array:
         xyz_arr = self.get_xyz_arr()
-        zxy_arr = xyz_to_zxy(xyz_arr)
+        zxy_arr = voxels_utils.xyz_to_zxy(xyz_arr)
         return zxy_arr  
 
     def get_smooth_voxels_mask(self) -> np.array:
@@ -51,15 +54,15 @@ class Dataset:
         return xyz_voxels_mask_smooth
 
     def get_mesh(self) -> np.array:
-        mesh = read_off(self.file_paths.mesh)    
+        mesh = mesh_utils.read_off(self.file_paths.mesh)    
         return mesh
 
     def get_smooth_mesh(self) -> np.array:
-        mesh_smooth = read_off(self.file_paths.mesh_smooth)    
+        mesh_smooth = mesh_utils.read_off(self.file_paths.mesh_smooth)    
         return mesh_smooth
 
     def get_convex_mesh(self) -> np.array:
-        mesh_convex = read_off(self.file_paths.mesh_convex)    
+        mesh_convex = mesh_utils.read_off(self.file_paths.mesh_convex)    
         return mesh_convex
     
     def get_lbo_data(self) -> Tuple[np.array, np.array, np.array]:
@@ -67,6 +70,10 @@ class Dataset:
         eigenvectors, eigenvalues, area_weights = lbo_data["eigenvectors"], lbo_data["eigenvalues"], lbo_data["area_weights"], 
         return eigenvectors, eigenvalues, area_weights
     
+    def get_voxelized_mesh(self) -> np.array:
+        voxels_mesh = np.load(self.file_paths.mesh_voxelized)
+        return voxels_mesh
+
     def get_voxelized_smooth_mesh(self) -> np.array:
         voxels_smooth_mesh = np.load(self.file_paths.smooth_mesh_voxelized)    
         return voxels_smooth_mesh
@@ -76,8 +83,47 @@ class Dataset:
         return voxels_convex_mesh
 
     def visualize_existing_data(self):
+        
+        img_sections_path = os.path.join(self.target_root_dir, "scan_sections.jpg") #todo add name to path. 
+        self.file_paths.scan_sections = img_sections_path
+        sections_image = visualization_utils.draw_2d_sections( self.get_xyz_arr(), img_sections_path)
+        
+        masks_data = [
+            {
+                "name": "raw_mask_sections",
+                "arr": self.get_xyz_voxels_mask(),
+                "color": visualization_utils.colors.YELLOW_RGB
+            },
+            {
+                "name": "smooth_by_voxels_mask_sections",
+                "arr": self.get_smooth_voxels_mask(),
+                "color": visualization_utils.colors.RED_RGB
+            },
+            {
+                "name": "mesh_mask_sections",
+                "arr": self.get_voxelized_mesh(),
+                "color": visualization_utils.colors.PURPLE_RGB
+            },
+            {
+                "name": "smooth_by_lbo_mask_sections",
+                "arr":  self.get_voxelized_smooth_mesh(),
+                "color": visualization_utils.colors.BLUE_RGB
+            },
+            {
+                "name": "convex_mask_sections",
+                "arr":  self.get_voxelized_convex_mesh(),
+                "color": visualization_utils.colors.GREEN_RGB
+            },
+        ]
+        self.file_paths = visualization_utils.draw_masks_and_contours(sections_image, masks_data, self.target_root_dir, self.file_paths)
+
+
         pass
-        # 3 sections, 3 sections with mask, and smoothed mask, 3d plotly of mesh(es), section with all masks, lbos
+
+
+        
+        
+    # 3d plotly of mesh(es), lbos
 
 
         

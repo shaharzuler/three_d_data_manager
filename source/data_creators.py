@@ -1,17 +1,22 @@
 import os
 from distutils.dir_util import copy_tree
 from typing import Dict
-import numpy as np
-from three_d_data_manager.source.utils import voxels_utils
-from three_d_data_manager.source.utils.LBO_utils import LBOcalc
-from three_d_data_manager.source.utils.visualisation_utils import visualize_grid_of_lbo
-from three_d_data_manager.source.utils.voxels_mesh_conversions_utils import Mesh2VoxelsConvertor
-from .file_paths import FilePaths
-from .utils import dicom_utils, os_utils, mesh_utils
 import shutil
 from dataclasses import asdict
+
+import numpy as np
 import scipy.ndimage
 import open3d as o3d
+
+# from three_d_data_manager.source.utils import 
+# from three_d_data_manager.source.utils import 
+# from three_d_data_manager.source.utils import visualization_utils #visualize_grid_of_lbo
+# from three_d_data_manager.source.utils import 
+#   
+from .file_paths import FilePaths
+from .utils import dicom_utils, os_utils, mesh_utils, voxels_utils, LBO_utils, voxels_mesh_conversions_utils
+
+
 
 #TODO all creations only if doesnt exist
 #TODO call visualization args for 2d dicom. visualize_grid_of_lbos etc
@@ -136,7 +141,7 @@ class ZXYVoxelsMaskDataCreator(DataCreator):
                 voxel_size_zxy = dataset_attrs["voxel_size"][2], dataset_attrs["voxel_size"][0], dataset_attrs["voxel_size"][1]
                 arr = scipy.ndimage.zoom(arr, voxel_size_zxy)
         # shutil.copy2(self.source_path, self.arr_path)
-        np.save(self.arr_path, arr)
+        np.save(self.arr_path, arr.astype(bool))
         file_paths.zxy_voxels_mask_raw = self.arr_path
         return file_paths
 
@@ -200,7 +205,7 @@ class SmoothLBOMeshDataCreator(DataCreator):
 
    
     def smooth_with_lbo(self, lbo_creation_args, verts, faces):
-        LBO = LBOcalc(k=lbo_creation_args.num_LBOs, use_torch=lbo_creation_args.use_torch, is_point_cloud=lbo_creation_args.is_point_cloud)
+        LBO = LBO_utils.LBOcalc(k=lbo_creation_args.num_LBOs, use_torch=lbo_creation_args.use_torch, is_point_cloud=lbo_creation_args.is_point_cloud)
         self.eigenvectors, self.eigenvalues, self.area_weights = LBO.get_LBOs(verts, faces)
         # the following is to reduce dim in the LBO space (verts*eigenvects*eigenvects^-1) :
         projected = np.dot(verts.transpose(), self.eigenvectors[0,:,:])
@@ -247,7 +252,7 @@ class VoxelizedMeshDataCreator(DataCreator):
     def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None):
         super().add_sample(target_root_dir, creation_args, dataset_attrs)
         mesh_filename = creation_args.mesh_path.split("/")[-1].split(".off")[0]
-        voxelized = Mesh2VoxelsConvertor(creation_args.mesh_path, dataset_attrs["shape"]).padded_voxelized
+        voxelized = voxels_mesh_conversions_utils.Mesh2VoxelsConvertor(creation_args.mesh_path, dataset_attrs["shape"]).padded_voxelized
 
         self.voxelized_mesh_path = os.path.join(target_root_dir, self.name, self.default_top_foldername, mesh_filename + self.default_filename + ".npy")
         np.save(self.voxelized_mesh_path, voxelized)

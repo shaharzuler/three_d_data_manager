@@ -12,7 +12,11 @@ class FilePaths:
         self.two_d_x:str = None
         self.two_d_y:str = None
         self.two_d_z:str = None
-        self.two_d:str = None
+        self.scan_sections:str = None
+        self.section_contours:str = None
+
+        #TODO add section names
+        
 
         self.zxy_voxels_mask_raw:str = None
         self.xyz_voxels_mask_raw:str = None
@@ -24,5 +28,6 @@ class FilePaths:
         self.mesh_convex:str = None
         self.pcd_raw:str = None
 
-        self.smooth_mesh_voxels:str = None
-        self.convex_mesh_voxels:str = None
+        self.mesh_voxelized:str = None
+        self.smooth_mesh_voxelized:str = None
+        self.convex_mesh_voxelized:str = None
