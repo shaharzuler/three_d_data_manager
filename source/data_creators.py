@@ -8,13 +8,9 @@ import numpy as np
 import scipy.ndimage
 import open3d as o3d
 
-# from three_d_data_manager.source.utils import 
-# from three_d_data_manager.source.utils import 
-# from three_d_data_manager.source.utils import visualization_utils #visualize_grid_of_lbo
-# from three_d_data_manager.source.utils import 
-#   
+   
 from .file_paths import FilePaths
-from .utils import dicom_utils, os_utils, mesh_utils, voxels_utils, LBO_utils, voxels_mesh_conversions_utils
+from .utils import dicom_utils, os_utils, mesh_utils, voxels_utils, LBO_utils, voxels_mesh_conversions_utils, sections_2d_visualization_utils, mesh_3d_visualization_utils
 
 
 
@@ -78,6 +74,7 @@ class DicomDataCreator(DataCreator):
 class XYZArrDataCreator(DataCreator):
     def __init__(self, source_path:str, name:str, hirarchy_levels:int) -> None:
         super().__init__(source_path, name, hirarchy_levels)
+        self.default_dirname = "voxels"
         self.default_filename = "xyz_arr_raw"
     
     def get_xyz_arr_from_dicom(self, dicom_dir):
@@ -86,8 +83,11 @@ class XYZArrDataCreator(DataCreator):
 
     def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None):
         super().add_sample(target_root_dir, creation_args, dataset_attrs)
+        self.voxels_dir = os.path.join(self.sample_dir, self.default_dirname)
+        os.makedirs(self.voxels_dir, exist_ok=True)
+
         xyz_arr = self.get_xyz_arr_from_dicom(file_paths.dicom_dir)
-        self.arr_path = os.path.join(target_root_dir, self.name, self.default_top_foldername, self.default_filename + ".npy")
+        self.arr_path = os.path.join(self.voxels_dir, self.default_filename + ".npy")
         np.save(self.arr_path, xyz_arr)
         file_paths.xyz_arr = self.arr_path
         return file_paths
@@ -101,12 +101,16 @@ class XYZArrDataCreator(DataCreator):
 class XYZVoxelsMaskDataCreator(DataCreator):
     def __init__(self, source_path:str, name:str, hirarchy_levels:int, file=None) -> None:
         super().__init__(source_path, name, hirarchy_levels)
+        self.default_dirname = "voxels"
         self.default_filename = "xyz_voxels_mask_raw"
         self.file = file
     
     def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None):
         super().add_sample(target_root_dir, creation_args, dataset_attrs)
-        self.arr_path = os.path.join(target_root_dir, self.name, self.default_top_foldername, self.default_filename + ".npy")
+        self.voxels_dir = os.path.join(self.sample_dir, self.default_dirname)
+        os.makedirs(self.voxels_dir, exist_ok=True)
+
+        self.arr_path = os.path.join(self.voxels_dir, self.default_filename + ".npy")
         if "voxel_size" in dataset_attrs:
             voxel_size_zxy = dataset_attrs["voxel_size"]
             arr = scipy.ndimage.zoom(arr, voxel_size_zxy)
@@ -118,10 +122,12 @@ class XYZVoxelsMaskDataCreator(DataCreator):
         return file_paths
 
     def add_sample_from_file(self, file:np.array, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None) -> FilePaths:
-        
         super().add_sample(target_root_dir, creation_args, dataset_attrs)
-        target_folder_path = os.path.join(target_root_dir, self.name, self.default_top_foldername)
-        self.arr_path = os.path.join(target_folder_path, self.default_filename + ".npy")
+        self.voxels_dir = os.path.join(self.sample_dir, self.default_dirname)
+        os.makedirs(self.voxels_dir, exist_ok=True)
+
+        # target_folder_path = os.path.join(target_root_dir, self.name, self.default_top_foldername)
+        self.arr_path = os.path.join(self.voxels_dir, self.default_filename + ".npy")
         np.save(self.arr_path, file)
         file_paths.xyz_voxels_mask_raw = self.arr_path
 
@@ -130,11 +136,15 @@ class XYZVoxelsMaskDataCreator(DataCreator):
 class ZXYVoxelsMaskDataCreator(DataCreator):
     def __init__(self, source_path:str, name:str, hirarchy_levels:int) -> None:
         super().__init__(source_path, name, hirarchy_levels)
+        self.default_dirname = "voxels"
         self.default_filename = "zxy_voxels_mask_raw"
     
     def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None):
         super().add_sample(target_root_dir, creation_args, dataset_attrs)
-        self.arr_path = os.path.join(target_root_dir, self.name, self.default_top_foldername, self.default_filename + ".npy")
+        self.voxels_dir = os.path.join(self.sample_dir, self.default_dirname)
+        os.makedirs(self.voxels_dir, exist_ok=True)
+
+        self.arr_path = os.path.join(self.voxels_dir, self.default_filename + ".npy")
         arr = np.load(self.source_path)
         if voxels_utils.zxy_to_xyz(arr).shape != dataset_attrs["shape"]:
             if "voxel_size" in dataset_attrs:
@@ -148,29 +158,36 @@ class ZXYVoxelsMaskDataCreator(DataCreator):
 class SmoothVoxelsMaskDataCreator(DataCreator):
     def __init__(self, source_path:str, name:str, hirarchy_levels:int, file=None) -> None:
         super().__init__(source_path, name, hirarchy_levels)
+        self.default_dirname = "voxels"
         self.default_filename = "xyz_voxels_mask_smooth"
         self.file = file
     
     def add_sample_from_file(self, file:np.array, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None) -> FilePaths:
         super().add_sample(target_root_dir, creation_args, dataset_attrs)
-        target_folder_path = os.path.join(target_root_dir, self.name, self.default_top_foldername)
-        self.arr_path = os.path.join(target_folder_path, self.default_filename + ".npy")
+        self.voxels_dir = os.path.join(self.sample_dir, self.default_dirname)
+        os.makedirs(self.voxels_dir, exist_ok=True)
+
+        # target_folder_path = os.path.join(target_root_dir, self.name, self.default_top_foldername)
+        self.arr_path = os.path.join(self.voxels_dir, self.default_filename + ".npy")
         np.save(self.arr_path, file)
         file_paths.xyz_voxels_mask_smooth = self.arr_path
 
-        os_utils.write_config_file(target_folder_path, self.default_filename, asdict(creation_args)) 
+        os_utils.write_config_file(self.voxels_dir, self.default_filename, asdict(creation_args)) 
         return file_paths
 
 class MeshDataCreator(DataCreator):
     def __init__(self, source_path:str, name:str, hirarchy_levels:int, file=None) -> None:
         super().__init__(source_path, name, hirarchy_levels)
-        self.default_filename = "mesh"
+        self.default_dirname = "meshes"
+        self.default_filename = "mesh" #os.path.join("meshes", "mesh")
         self.file = file
     
     def add_sample_from_file(self, file:np.array, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None) -> FilePaths:
         super().add_sample(target_root_dir, creation_args, dataset_attrs)
-        target_folder_path = os.path.join(target_root_dir, self.name, self.default_top_foldername)
-        self.mesh_path = os.path.join(target_folder_path, self.default_filename + ".off")
+        self.mesh_dir = os.path.join(self.sample_dir, self.default_dirname)
+        os.makedirs(self.mesh_dir, exist_ok=True)
+        # target_folder_path = os.path.join(target_root_dir, self.name, self.default_top_foldername)
+        self.mesh_path = os.path.join(self.mesh_dir, self.default_filename + ".off")
         verts, faces = file
         mesh_utils.write_off(self.mesh_path, verts, faces)
         file_paths.mesh = self.mesh_path
@@ -181,17 +198,20 @@ class MeshDataCreator(DataCreator):
 class SmoothLBOMeshDataCreator(DataCreator):
     def __init__(self, source_path:str, name:str, hirarchy_levels:int) -> None:
         super().__init__(source_path, name, hirarchy_levels)
-        self.default_filename = "smooth_mesh"
+        self.default_dirname = "meshes"
+        self.default_filename = "smooth_mesh" #os.path.join("meshes", "smooth_mesh")
     
 
     def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None):
         super().add_sample(target_root_dir, creation_args, dataset_attrs)
+        self.mesh_dir = os.path.join(self.sample_dir, self.default_dirname)
+        os.makedirs(self.mesh_dir, exist_ok=True)
 
         verts, faces = mesh_utils.read_off(file_paths.mesh)
         smooth_verts, faces = self.smooth_with_lbo(creation_args, verts, faces)
 
         target_folder_path = os.path.join(target_root_dir, self.name, self.default_top_foldername)
-        self.smooth_mesh_path = os.path.join(target_folder_path, self.default_filename + ".off")
+        self.smooth_mesh_path = os.path.join(self.mesh_dir, self.default_filename + ".off")
         mesh_utils.write_off(self.smooth_mesh_path, smooth_verts, faces)
         self.lbo_data_path =  os.path.join(target_folder_path, "lbo_data.npz")
         np.savez(self.lbo_data_path, eigenvectors=self.eigenvectors, eigenvalues=self.eigenvalues, area_weights=self.area_weights)
@@ -199,7 +219,7 @@ class SmoothLBOMeshDataCreator(DataCreator):
         file_paths.mesh_smooth = self.smooth_mesh_path
         file_paths.lbo_data = self.lbo_data_path
 
-        os_utils.write_config_file(target_folder_path, self.default_filename, asdict(creation_args)) 
+        os_utils.write_config_file(self.mesh_dir, self.default_filename, asdict(creation_args)) 
 
         return file_paths
 
@@ -213,23 +233,23 @@ class SmoothLBOMeshDataCreator(DataCreator):
         smooth_verts = np.dot(projected, eigenvects_pinv).transpose() 
         return smooth_verts, faces
 
-
-
-
 class ConvexMeshDataCreator(DataCreator):
     def __init__(self, source_path:str, name:str, hirarchy_levels:int) -> None:
         super().__init__(source_path, name, hirarchy_levels)
-        self.default_filename = "convex_mesh"
+        self.default_dirname = "meshes"
+        self.default_filename = "convex_mesh" #os.path.join("meshes", "convex_mesh")
     
 
     def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None):
         super().add_sample(target_root_dir, creation_args, dataset_attrs)
+        self.mesh_dir = os.path.join(self.sample_dir, self.default_dirname)
+        os.makedirs(self.mesh_dir, exist_ok=True)
 
         verts, faces = mesh_utils.read_off(file_paths.mesh_smooth)
         convex_verts, convex_faces = self.convexify(verts)
 
-        target_folder_path = os.path.join(target_root_dir, self.name, self.default_top_foldername) #TODO as 1 func for base class? prepare paths first for check if file exists?
-        self.convex_mesh_path = os.path.join(target_folder_path, self.default_filename + ".off")
+        # target_folder_path = os.path.join(target_root_dir, self.name, self.default_top_foldername) #TODO as 1 func for base class? prepare paths first for check if file exists?
+        self.convex_mesh_path = os.path.join(self.mesh_dir, self.default_filename + ".off")
         mesh_utils.write_off(self.convex_mesh_path, convex_verts, convex_faces)
         
         file_paths.mesh_convex = self.convex_mesh_path
@@ -247,18 +267,70 @@ class ConvexMeshDataCreator(DataCreator):
 class VoxelizedMeshDataCreator(DataCreator):
     def __init__(self, source_path:str, name:str, hirarchy_levels:int) -> None:
         super().__init__(source_path, name, hirarchy_levels)
+        self.default_dirname = "voxels"
         self.default_filename = "_voxelized"
 
     def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None):
         super().add_sample(target_root_dir, creation_args, dataset_attrs)
+        self.voxels_dir = os.path.join(self.sample_dir, self.default_dirname)
+        os.makedirs(self.voxels_dir, exist_ok=True)
+
         mesh_filename = creation_args.mesh_path.split("/")[-1].split(".off")[0]
         voxelized = voxels_mesh_conversions_utils.Mesh2VoxelsConvertor(creation_args.mesh_path, dataset_attrs["shape"]).padded_voxelized
 
-        self.voxelized_mesh_path = os.path.join(target_root_dir, self.name, self.default_top_foldername, mesh_filename + self.default_filename + ".npy")
+        self.voxelized_mesh_path = os.path.join(self.voxels_dir, mesh_filename + self.default_filename + ".npy")
         np.save(self.voxelized_mesh_path, voxelized)
         setattr(file_paths, mesh_filename + self.default_filename, self.voxelized_mesh_path)
 
         return file_paths
 
+class TwoDVisDataCreator(DataCreator):
+    def __init__(self, source_path:str, name:str, hirarchy_levels:int, file=None) -> None:
+        super().__init__(source_path, name, hirarchy_levels)
+        self.default_dirname = "2d_sections_visualization"
+        self.default_filename = "2d_sections"
+        self.file = file
     
 
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None):
+        super().add_sample(target_root_dir, creation_args, dataset_attrs)
+        self.output_dir = os.path.join(self.sample_dir, self.default_dirname)
+        os.makedirs(self.output_dir, exist_ok=True)
+
+        img_sections_path = os.path.join(self.output_dir, f"scan_{self.default_filename}.jpg") 
+        file_paths.scan_sections = img_sections_path
+        sections_image = sections_2d_visualization_utils.draw_2d_sections(creation_args.xyz_scan_arr, img_sections_path)
+        
+        file_paths = sections_2d_visualization_utils.draw_masks_and_contours(sections_image, creation_args.masks_data, self.output_dir, file_paths)
+    
+        return file_paths
+
+class ThreeDVisDataCreator(DataCreator):
+    def __init__(self, source_path:str, name:str, hirarchy_levels:int, file=None) -> None:
+        super().__init__(source_path, name, hirarchy_levels)
+        self.default_dirname = "3d_visualization"
+        self.default_filename = "TODO"
+        self.file = file
+    
+
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None):
+        super().add_sample(target_root_dir, creation_args, dataset_attrs)
+        self.output_dir = os.path.join(self.sample_dir, self.default_dirname)
+        os.makedirs(self.output_dir, exist_ok=True)
+
+        img_sections_path = os.path.join(self.output_dir, f"scan_{self.default_filename}.jpg") 
+
+        
+        mesh_3d_visualization_utils.visualize_grid_of_lbo(
+            creation_args.smooth_mesh_verts, 
+            creation_args.smooth_mesh_faces, 
+            creation_args.smooth_mesh_eigevectors, 
+            dirpath=self.output_dir, 
+            prefix="smooth_",
+            max_lbos=self.creation_args.max_smooth_lbo_mesh_visualization)
+        
+        # file_paths.scan_sections = img_sections_path
+        # # sections_image = sections_2d_visualization_utils.draw_2d_sections(creation_args.xyz_scan_arr, img_sections_path)
+        # file_paths = sections_2d_visualization_utils.draw_masks_and_contours(sections_image, creation_args.masks_data, self.sample_dir, file_paths)
+    
+        return file_paths

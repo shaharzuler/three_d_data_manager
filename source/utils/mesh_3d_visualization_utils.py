@@ -17,7 +17,7 @@ import numpy as np
 import plotly.graph_objects as go
 from matplotlib import pyplot as plt
 from PIL import Image
-# import cv2
+
 
 
 def visualize_grid_of_lbo(verts ,faces ,lbos ,max_lbos=None ,dirpath='/home/oefroni/dfaust_project/plots/' ,

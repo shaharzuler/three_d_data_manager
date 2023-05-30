@@ -5,6 +5,8 @@ import numpy as np
 import cv2
 from PIL import Image
 
+from three_d_data_manager.source.utils import mesh_3d_visualization_utils
+
 from .file_paths import FilePaths
 from .data_creators import DataCreator
 from .utils import mesh_utils, voxels_utils , sections_2d_visualization_utils
@@ -82,13 +84,9 @@ class Dataset:
         voxels_convex_mesh = np.load(self.file_paths.convex_mesh_voxelized)    
         return voxels_convex_mesh
 
-    def visualize_existing_data(self):
-        
-        img_sections_path = os.path.join(self.target_root_dir, "scan_sections.jpg") #todo add name to path. 
-        self.file_paths.scan_sections = img_sections_path
-        sections_image = sections_2d_visualization_utils.draw_2d_sections( self.get_xyz_arr(), img_sections_path)
-        
-        masks_data = [
+    def visualize_existing_data_sections(self, two_d_visualisation_data_creator, two_d_visualisation_args):
+        two_d_visualisation_args.xyz_scan_arr = self.get_xyz_arr()
+        two_d_visualisation_args.masks_data = [
             {
                 "name": "raw_mask_sections",
                 "arr": self.get_xyz_voxels_mask(),
@@ -115,15 +113,22 @@ class Dataset:
                 "color": sections_2d_visualization_utils.colors.GREEN_RGB
             },
         ]
-        self.file_paths = sections_2d_visualization_utils.draw_masks_and_contours(sections_image, masks_data, self.target_root_dir, self.file_paths)
+        self.add_sample(two_d_visualisation_data_creator, two_d_visualisation_args)
 
+
+    def visualize_existing_data_3d(self, three_d_visualisation_data_creator, three_d_visualisation_args):
+        # 3d plotly of mesh(es), lbos
+        three_d_visualisation_args.smooth_mesh_verts, three_d_visualisation_args.smooth_mesh_faces = self.get_smooth_mesh()
+        three_d_visualisation_args.eigenvectors = self.get_lbo_data()["eigenvectors"]
+
+        self.add_sample(three_d_visualisation_data_creator, three_d_visualisation_args)
 
         pass
 
 
         
         
-    # 3d plotly of mesh(es), lbos
+
 
 
         
