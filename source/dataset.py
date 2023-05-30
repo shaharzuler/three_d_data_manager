@@ -7,7 +7,7 @@ from PIL import Image
 
 from .file_paths import FilePaths
 from .data_creators import DataCreator
-from .utils import mesh_utils, voxels_utils, visualization_utils 
+from .utils import mesh_utils, voxels_utils , sections_2d_visualization_utils
 
 #TODO maybe user desides which format gets saved and which is created on the fly.
 
@@ -86,36 +86,36 @@ class Dataset:
         
         img_sections_path = os.path.join(self.target_root_dir, "scan_sections.jpg") #todo add name to path. 
         self.file_paths.scan_sections = img_sections_path
-        sections_image = visualization_utils.draw_2d_sections( self.get_xyz_arr(), img_sections_path)
+        sections_image = sections_2d_visualization_utils.draw_2d_sections( self.get_xyz_arr(), img_sections_path)
         
         masks_data = [
             {
                 "name": "raw_mask_sections",
                 "arr": self.get_xyz_voxels_mask(),
-                "color": visualization_utils.colors.YELLOW_RGB
+                "color": sections_2d_visualization_utils.colors.YELLOW_RGB
             },
             {
                 "name": "smooth_by_voxels_mask_sections",
                 "arr": self.get_smooth_voxels_mask(),
-                "color": visualization_utils.colors.RED_RGB
+                "color": sections_2d_visualization_utils.colors.RED_RGB
             },
             {
                 "name": "mesh_mask_sections",
                 "arr": self.get_voxelized_mesh(),
-                "color": visualization_utils.colors.PURPLE_RGB
+                "color": sections_2d_visualization_utils.colors.PURPLE_RGB
             },
             {
                 "name": "smooth_by_lbo_mask_sections",
                 "arr":  self.get_voxelized_smooth_mesh(),
-                "color": visualization_utils.colors.BLUE_RGB
+                "color": sections_2d_visualization_utils.colors.BLUE_RGB
             },
             {
                 "name": "convex_mask_sections",
                 "arr":  self.get_voxelized_convex_mesh(),
-                "color": visualization_utils.colors.GREEN_RGB
+                "color": sections_2d_visualization_utils.colors.GREEN_RGB
             },
         ]
-        self.file_paths = visualization_utils.draw_masks_and_contours(sections_image, masks_data, self.target_root_dir, self.file_paths)
+        self.file_paths = sections_2d_visualization_utils.draw_masks_and_contours(sections_image, masks_data, self.target_root_dir, self.file_paths)
 
 
         pass
