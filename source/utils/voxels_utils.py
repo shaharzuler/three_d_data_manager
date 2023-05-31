@@ -1,7 +1,5 @@
-#TODO credits
-
 import numpy as np
-from skimage import morphology, measure
+from skimage import morphology
 
 
 def xyz_to_zxy(xyz_arr:np.array):
@@ -24,7 +22,6 @@ def create_footprint(r:int) -> np.array:
             for k in range(r):
                 if np.sum(np.square(np.array([i,j,k])-np.array([2,2,2])))<2*(r+1):
                     footprint[i,j,k]=1
-    # footprint = np.expand_dims(footprint,0)
     return footprint
 
 def voxel_smoothing(masks_arr:np.array, opening_footprint_radius:int, closing_to_opening_ratio:float) -> np.array: 

@@ -1,17 +1,16 @@
+#TODO maybe user desides which format gets saved and which is created on the fly.
+
 import os
 from typing import Tuple
 
 import numpy as np
-import cv2
-from PIL import Image
-
-from three_d_data_manager.source.utils import mesh_3d_visualization_utils
 
 from .file_paths import FilePaths
 from .data_creators import DataCreator
 from .utils import mesh_utils, voxels_utils , sections_2d_visualization_utils
 
-#TODO maybe user desides which format gets saved and which is created on the fly.
+#TODO concider merging add sample nd add sample from file
+
 
 
 
@@ -32,7 +31,6 @@ class Dataset:
         properties = data_creator.get_properties()
         for prop_name, prop_value in properties.items():
             setattr(self, prop_name, prop_value)
-
 
     def get_zxy_voxels_mask(self) -> np.array:
         zxy_voxels_mask_arr = np.load(self.file_paths.zxy_voxels_mask_raw)
@@ -124,7 +122,6 @@ class Dataset:
             },
         ]
         self.add_sample(two_d_visualisation_data_creator, two_d_visualisation_args)
-
 
     def visualize_existing_data_3d(self, three_d_visualisation_data_creator, three_d_visualisation_args):
         three_d_visualisation_args.smooth_mesh_verts, three_d_visualisation_args.smooth_mesh_faces = self.get_smooth_mesh()

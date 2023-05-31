@@ -1,4 +1,3 @@
-#TODO credits
 import os
 import pickle
 
@@ -10,7 +9,7 @@ import scipy.io as sio
 from three_d_data_manager.source.utils.LBO_utils import fem_laplacian
 
 
-# this function is taken from github.com/pvnieo/GeomFmaps_pytorch/utils.py
+# The following function is taken from github.com/pvnieo/GeomFmaps_pytorch/utils.py
 def write_off(file_path, verts, faces):
     file_path = open(file_path, "w")
     file_path.write("OFF\n")
@@ -20,7 +19,7 @@ def write_off(file_path, verts, faces):
     for x in faces:
         file_path.write(f"{len(x)} {' '.join(map(str, x))}\n")
 
-# this function is taken from github.com/pvnieo/GeomFmaps_pytorch/utils.py
+# The following function is copied from github.com/pvnieo/GeomFmaps_pytorch/utils.py
 def read_off(file):
     file = open(file, "r")
     if file.readline().strip() != "OFF":
@@ -32,7 +31,7 @@ def read_off(file):
 
     return np.array(verts), np.array(faces)
 
-
+# The following class is copied from https://github.com/dvirginz/DPC/visualization/mesh_container.py
 class MeshContainer(object):
     """
     Helper class to store face, vert as numpy

@@ -3,42 +3,31 @@ import numpy as np
 
 
 @dataclass
-class VoxelSmoothingArgs:#(Logable):
+class VoxelSmoothingArgs:
     opening_footprint_radius: int
     fill_holes_Area_threshold: int
     closing_to_opening_ratio: float
-    # show: bool = False
 
 @dataclass
-class MeshSmoothingArgs:#(Logable):
+class MeshSmoothingArgs:
     marching_cubes_step_size: int
     # convexify_method = None #TODO
     
-
 @dataclass
-class LBOArgs:#(Logable):
+class LBOArgs:
     num_LBOs: int
     is_point_cloud: bool
     mesh_path: str
     orig_mesh_name: str
     use_torch: bool = True # use_torch=False function is buggy
 
-
 @dataclass
-class SmoothMeshCreationArgs:#(Logable):
+class SmoothMeshCreationArgs:
     lbos_path: str
-
 
 @dataclass
 class VoxelizingArgs:
     mesh_path: str
-
-
-
-# @dataclass
-# class MeshDownsampleCreationArgs:
-#     max_num_points: int
-#     original_mesh_name: str
 
 @dataclass
 class TwoDVisArgs:

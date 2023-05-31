@@ -6,7 +6,7 @@ from scipy import sparse
 from argparse import Namespace
 from scipy.sparse import csr_matrix
 
-
+# The following functions are copied from https://github.com/omriefroni/dfaust_allign/utils/fem_laplace_beltrami_routers.py
 def _reshape_and_repeat(a_array):
     """
     For a given 1-D array A, run the MATLAB code below.
@@ -283,20 +283,12 @@ def fem_laplacian(points, faces, spectrum_size=10, normalization="areaindex",
 
 
 
-
+# Majority of the code in this class is copied from https://github.com/omriefroni/dfaust_allign/utils/LBO.py
 class LBOcalc(object):
     def __init__(self, k=30, use_torch=False, is_point_cloud=False):
         self.k = k
         self.use_torch = use_torch
         self.is_pc = is_point_cloud
-
-    def reproject(self, projected, faces, all_vects, prefix=""):
-        all_vects_pseudo_inv = np.linalg.pinv(all_vects[0,:,:])
-        reprojected = np.dot(projected, all_vects_pseudo_inv).transpose()
-        dir_path = f"mesh_files/projection_exp_{self.k}" ###
-        # if not os.path.exists(dir_path):
-        #     os.makedirs(dir_path)
-        # visualize_grid_of_lbo(reprojected,faces,all_vects[0,:,:],dirpath=dir_path, prefix=prefix+"lbo_after_proj",max_lbos=4)
 
     def get_LBOs(self, verts, faces):   
         all_vects = []

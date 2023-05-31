@@ -1,5 +1,8 @@
+
+#TODO all creations only if doesnt exist
+#TODO aplit to files
+
 import os
-from distutils.dir_util import copy_tree
 from typing import Dict
 import shutil
 from dataclasses import asdict
@@ -9,13 +12,9 @@ import scipy.ndimage
 import open3d as o3d
 import h5py
 
-   
 from .file_paths import FilePaths
 from .utils import dicom_utils, os_utils, mesh_utils, voxels_utils, LBO_utils, voxels_mesh_conversions_utils, sections_2d_visualization_utils, mesh_3d_visualization_utils
 
-
-
-#TODO all creations only if doesnt exist
 
 
 class DataCreator:
@@ -24,7 +23,6 @@ class DataCreator:
         self.name: str = name
         self.hirarchy_levels: int = hirarchy_levels
         self.default_top_foldername: str = "orig"
-        # TODO add automatically creation of 2d image self.create_2d_img = create_2d_img
 
     def add_sample(self, target_root_dir:str, creation_args, dataset_attrs:Dict[str,str]):
         if self.hirarchy_levels>2:
@@ -41,9 +39,6 @@ class DataCreator:
 
 
     
-
-
-
 
 class DicomDataCreator(DataCreator):
     def __init__(self, source_path:str, name:str, hirarchy_levels:int) -> None:
@@ -275,8 +270,6 @@ class ConvexMeshDataCreator(DataCreator):
         verts_convex_hull = np.asarray(convex_hull.vertices).astype(np.float32)
         faces_convex_hull = np.asarray(convex_hull.triangles).astype(np.int64)
         return verts_convex_hull, faces_convex_hull
-
-
 
 class VoxelizedMeshDataCreator(DataCreator):
     def __init__(self, source_path:str, name:str, hirarchy_levels:int) -> None:

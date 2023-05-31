@@ -1,9 +1,8 @@
+from typing import Tuple
+
 import numpy as np
 from skimage import measure
 import pyvista as pv
-from typing import Tuple
-import math
-import numpy as np
 import trimesh
 
 def voxels_mask_to_mesh(voxels_mask:np.array, marching_cubes_step_size:int):
