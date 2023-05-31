@@ -67,21 +67,31 @@ class Dataset:
         mesh_convex = mesh_utils.read_off(self.file_paths.mesh_convex)    
         return mesh_convex
     
-    def get_lbo_data(self) -> Tuple[np.array, np.array, np.array]:
-        lbo_data = np.load(self.file_paths.lbo_data)    
+    def get_mesh_lbo_data(self) -> Tuple[np.array, np.array, np.array]:
+        lbo_data = np.load(self.file_paths.mesh_lbo_data)    
+        eigenvectors, eigenvalues, area_weights = lbo_data["eigenvectors"], lbo_data["eigenvalues"], lbo_data["area_weights"], 
+        return eigenvectors, eigenvalues, area_weights
+
+    def get_smooth_lbo_data(self) -> Tuple[np.array, np.array, np.array]:
+        lbo_data = np.load(self.file_paths.smooth_mesh_lbo_data)    
+        eigenvectors, eigenvalues, area_weights = lbo_data["eigenvectors"], lbo_data["eigenvalues"], lbo_data["area_weights"], 
+        return eigenvectors, eigenvalues, area_weights
+
+    def get_convex_lbo_data(self) -> Tuple[np.array, np.array, np.array]:
+        lbo_data = np.load(self.file_paths.convex_mesh_lbo_data)    
         eigenvectors, eigenvalues, area_weights = lbo_data["eigenvectors"], lbo_data["eigenvalues"], lbo_data["area_weights"], 
         return eigenvectors, eigenvalues, area_weights
     
     def get_voxelized_mesh(self) -> np.array:
-        voxels_mesh = np.load(self.file_paths.mesh_voxelized)
+        voxels_mesh = np.load(self.file_paths.xyz_mesh_voxelized)
         return voxels_mesh
 
     def get_voxelized_smooth_mesh(self) -> np.array:
-        voxels_smooth_mesh = np.load(self.file_paths.smooth_mesh_voxelized)    
+        voxels_smooth_mesh = np.load(self.file_paths.xyz_smooth_mesh_voxelized)    
         return voxels_smooth_mesh
 
     def get_voxelized_convex_mesh(self) -> np.array:
-        voxels_convex_mesh = np.load(self.file_paths.convex_mesh_voxelized)    
+        voxels_convex_mesh = np.load(self.file_paths.xyz_convex_mesh_voxelized)    
         return voxels_convex_mesh
 
     def visualize_existing_data_sections(self, two_d_visualisation_data_creator, two_d_visualisation_args):
@@ -117,13 +127,11 @@ class Dataset:
 
 
     def visualize_existing_data_3d(self, three_d_visualisation_data_creator, three_d_visualisation_args):
-        # 3d plotly of mesh(es), lbos
         three_d_visualisation_args.smooth_mesh_verts, three_d_visualisation_args.smooth_mesh_faces = self.get_smooth_mesh()
-        three_d_visualisation_args.eigenvectors = self.get_lbo_data()["eigenvectors"]
+        three_d_visualisation_args.smooth_mesh_eigenvectors = self.get_mesh_lbo_data()[0]
 
         self.add_sample(three_d_visualisation_data_creator, three_d_visualisation_args)
 
-        pass
 
 
         

@@ -43,10 +43,34 @@ class MeshSmoothingArgs:#(Logable):
 class LBOArgs:#(Logable):
     num_LBOs: int
     is_point_cloud: bool
-    max_smooth_lbo_mesh_visualization: int
+    mesh_path: str
+    orig_mesh_name: str
     use_torch: bool = True # use_torch=False function is buggy
+
+
+@dataclass
+class SmoothMeshCreationArgs:#(Logable):
+    lbos_path: str
 
 
 @dataclass
 class VoxelizingArgs:
     mesh_path: str
+
+import numpy as np
+
+@dataclass
+class MeshDownsampleCreationArgs:
+    max_num_points: int
+    original_mesh_name: str
+
+@dataclass
+class TwoDVisArgs:
+    masks_data: dict = None
+    xyz_scan_arr: np.array = None
+
+@dataclass
+class ThreeDVisArgs:
+    max_smooth_lbo_mesh_visualization: int
+
+    

@@ -1,4 +1,3 @@
-# from three_d_data_manager.source.utils.visualisation_utils import visualize_grid_of_lbo
 
 import torch
 import numpy as np
@@ -283,7 +282,7 @@ def fem_laplacian(points, faces, spectrum_size=10, normalization="areaindex",
     return result
 
 
- 
+
 
 class LBOcalc(object):
     def __init__(self, k=30, use_torch=False, is_point_cloud=False):
@@ -318,7 +317,7 @@ class LBOcalc(object):
 
         all_vects = np.array(all_vects) 
         all_a = np.array(all_a) 
-        return all_vects, all_vals, all_a
+        return all_vects[0], all_vals[0], all_a[0]
 
     def LBO_mesh(self, sample):
         S = dict()

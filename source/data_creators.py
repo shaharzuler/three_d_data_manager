@@ -7,6 +7,7 @@ from dataclasses import asdict
 import numpy as np
 import scipy.ndimage
 import open3d as o3d
+import h5py
 
    
 from .file_paths import FilePaths
@@ -179,27 +180,27 @@ class MeshDataCreator(DataCreator):
     def __init__(self, source_path:str, name:str, hirarchy_levels:int, file=None) -> None:
         super().__init__(source_path, name, hirarchy_levels)
         self.default_dirname = "meshes"
-        self.default_filename = "mesh" #os.path.join("meshes", "mesh")
+        self.default_filename = "mesh" 
         self.file = file
     
     def add_sample_from_file(self, file:np.array, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None) -> FilePaths:
         super().add_sample(target_root_dir, creation_args, dataset_attrs)
         self.mesh_dir = os.path.join(self.sample_dir, self.default_dirname)
         os.makedirs(self.mesh_dir, exist_ok=True)
-        # target_folder_path = os.path.join(target_root_dir, self.name, self.default_top_foldername)
         self.mesh_path = os.path.join(self.mesh_dir, self.default_filename + ".off")
         verts, faces = file
         mesh_utils.write_off(self.mesh_path, verts, faces)
         file_paths.mesh = self.mesh_path
 
-        # os_utils.write_config_file(target_folder_path, self.default_filename, asdict(args)) #TODO add voxels start index
+        # os_utils.write_config_file(target_folder_path, self.default_filename, asdict(args)) 
         return file_paths
 
 class SmoothLBOMeshDataCreator(DataCreator):
     def __init__(self, source_path:str, name:str, hirarchy_levels:int) -> None:
         super().__init__(source_path, name, hirarchy_levels)
         self.default_dirname = "meshes"
-        self.default_filename = "smooth_mesh" #os.path.join("meshes", "smooth_mesh")
+        self.default_filename = "smooth_mesh" 
+        # self.default_lbo_dirname = "lbos"
     
 
     def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None):
@@ -210,14 +211,14 @@ class SmoothLBOMeshDataCreator(DataCreator):
         verts, faces = mesh_utils.read_off(file_paths.mesh)
         smooth_verts, faces = self.smooth_with_lbo(creation_args, verts, faces)
 
-        target_folder_path = os.path.join(target_root_dir, self.name, self.default_top_foldername)
+        # target_folder_path = os.path.join(target_root_dir, self.name, self.default_top_foldername)
         self.smooth_mesh_path = os.path.join(self.mesh_dir, self.default_filename + ".off")
         mesh_utils.write_off(self.smooth_mesh_path, smooth_verts, faces)
-        self.lbo_data_path =  os.path.join(target_folder_path, "lbo_data.npz")
-        np.savez(self.lbo_data_path, eigenvectors=self.eigenvectors, eigenvalues=self.eigenvalues, area_weights=self.area_weights)
+        # self.lbo_data_path =  os.path.join(target_folder_path, "lbo_data.npz")
+        # np.savez(self.lbo_data_path, eigenvectors=self.eigenvectors, eigenvalues=self.eigenvalues, area_weights=self.area_weights)
         
         file_paths.mesh_smooth = self.smooth_mesh_path
-        file_paths.lbo_data = self.lbo_data_path
+        # file_paths.lbo_data = self.lbo_data_path
 
         os_utils.write_config_file(self.mesh_dir, self.default_filename, asdict(creation_args)) 
 
@@ -225,13 +226,41 @@ class SmoothLBOMeshDataCreator(DataCreator):
 
    
     def smooth_with_lbo(self, lbo_creation_args, verts, faces):
-        LBO = LBO_utils.LBOcalc(k=lbo_creation_args.num_LBOs, use_torch=lbo_creation_args.use_torch, is_point_cloud=lbo_creation_args.is_point_cloud)
-        self.eigenvectors, self.eigenvalues, self.area_weights = LBO.get_LBOs(verts, faces)
-        # the following is to reduce dim in the LBO space (verts*eigenvects*eigenvects^-1) :
-        projected = np.dot(verts.transpose(), self.eigenvectors[0,:,:])
-        eigenvects_pinv = np.linalg.pinv(self.eigenvectors[0,:,:])
+        lbo_data = np.load(lbo_creation_args.lbos_path)
+        # the following is to reduce dim in the LBO space (verts * eigenvects * (eigenvects^-1)) :
+        projected = np.dot(verts.transpose(), lbo_data["eigenvectors"])
+        eigenvects_pinv = np.linalg.pinv(lbo_data["eigenvectors"])
         smooth_verts = np.dot(projected, eigenvects_pinv).transpose() 
         return smooth_verts, faces
+
+class LBOsDataCreator(DataCreator):
+    def __init__(self, source_path:str, name:str, hirarchy_levels:int) -> None:
+        super().__init__(source_path, name, hirarchy_levels)
+        self.default_dirname = "lbos"
+        self.default_filename = "lbo_data" 
+    
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None):
+        super().add_sample(target_root_dir, creation_args, dataset_attrs)
+        self.lbos_dir = os.path.join(self.sample_dir, self.default_dirname)
+        os.makedirs(self.lbos_dir, exist_ok=True)
+
+        # verts, faces = mesh_utils.read_off(creation_args.mesh_path)
+
+        # smooth_verts, faces = self.smooth_with_lbo(creation_args, verts, faces)
+        LBO = LBO_utils.LBOcalc(k=creation_args.num_LBOs, use_torch=creation_args.use_torch, is_point_cloud=creation_args.is_point_cloud)
+        self.eigenvectors, self.eigenvalues, self.area_weights = LBO.get_LBOs(*mesh_utils.read_off(creation_args.mesh_path))
+
+        self.lbo_data_path =  os.path.join(self.lbos_dir, f"{creation_args.orig_mesh_name}_{self.default_filename}.npz")
+        np.savez(self.lbo_data_path, eigenvectors=self.eigenvectors, eigenvalues=self.eigenvalues, area_weights=self.area_weights)
+        
+        filename = f"{creation_args.orig_mesh_name}_{self.default_filename}"
+        setattr(file_paths, filename, self.lbo_data_path)
+        # file_paths.lbo_data = self.lbo_data_path
+
+        os_utils.write_config_file(self.lbos_dir, filename, asdict(creation_args)) 
+
+        return file_paths
+
 
 class ConvexMeshDataCreator(DataCreator):
     def __init__(self, source_path:str, name:str, hirarchy_levels:int) -> None:
@@ -264,11 +293,67 @@ class ConvexMeshDataCreator(DataCreator):
         faces_convex_hull = np.asarray(convex_hull.triangles).astype(np.int64)
         return verts_convex_hull, faces_convex_hull
 
+# class MeshDownsampledDataCreator(DataCreator):
+#     def __init__(self, source_path:str, name:str, hirarchy_levels:int, file=None) -> None:
+#         super().__init__(source_path, name, hirarchy_levels)
+#         self.default_dirname = "meshes"
+#         self.default_filename = "downsampeled" 
+#         self.file = file
+    
+#     def add_sample_from_file(self, file:np.array, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None) -> FilePaths:
+#         super().add_sample(target_root_dir, creation_args, dataset_attrs)
+        
+#         self.mesh_dir = os.path.join(self.sample_dir, self.default_dirname)
+#         os.makedirs(self.mesh_dir, exist_ok=True)
+
+#         self.mesh_path = os.path.join(self.mesh_dir, f"{self.default_filename}_{creation_args.original_mesh_name}.off")
+
+
+#         ################################
+#         mesh_o3d = o3d.geometry.TriangleMesh(vertices=o3d.utility.Vector3dVector(file[0]), triangles=o3d.utility.Vector3iVector(file[1])) 
+#         mesh_o3d.compute_vertex_normals()
+
+#         pcd_from_mesh = mesh_o3d.sample_points_uniformly(number_of_points=creation_args.max_num_points) #TODO save pointcloud
+#         mesh_from_pcd = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(pcd_from_mesh, depth=8, width=0, scale=1.1, linear_fit=True)[0]
+#         mesh_from_pcd = mesh_from_pcd.simplify_quadric_decimation(creation_args.max_num_points)
+#         verts = np.asarray(mesh_from_pcd.vertices)
+#         faces = np.asarray(mesh_from_pcd.triangles)
+
+        
+#         LBO = LBO_utils.LBOcalc(k=num_LBOs, use_torch=True, is_pc=False)
+#         evects, evals, a = LBO.get_LBOs(np.asarray(mesh_from_pcd.vertices), np.asarray(mesh_from_pcd.triangles))#faces)
+       
+       
+
+#         # visualize_grid_of_lbo(verts, faces, evects[0,:,:], dirpath=visualization_output_dir_path, prefix=sample_name, max_lbos=10) 
+#         out_h5 = h5py.File('i_dataset2.hdf5', 'w')
+
+#         out_h5.create_dataset(    sample_name + '_verts'        , data=np.array(verts) , compression="gzip")
+#         out_h5.create_dataset(    sample_name + "_faces"        , data=np.array(faces) , compression="gzip") # - 1  ?
+#         out_h5.create_dataset(    sample_name + "_a"            , data=a,                compression="gzip") # [:,0] ?
+#         out_h5.create_dataset(    sample_name + "_evals"        , data=np.array(evals) , compression="gzip") # [:,0] ?
+#         out_h5.create_dataset(    sample_name + "_evects"       , data=np.array(evects), compression="gzip")
+       
+#         print("Sample took --- %s seconds ---" % ((time.time() - tic)/60))
+
+#         out_h5.close()
+#         ###############################
+
+
+
+
+#         mesh_utils.write_off(self.mesh_path, verts, faces)
+#         file_paths.mesh = self.mesh_path
+
+#         os_utils.write_config_file(self.mesh_dir, f"{self.default_filename}_{creation_args.original_mesh_name}", asdict(creation_args)) 
+#         return file_paths
+
 class VoxelizedMeshDataCreator(DataCreator):
     def __init__(self, source_path:str, name:str, hirarchy_levels:int) -> None:
         super().__init__(source_path, name, hirarchy_levels)
         self.default_dirname = "voxels"
-        self.default_filename = "_voxelized"
+        self.default_filename = "voxelized"
+        self.prefix = "xyz"
 
     def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None):
         super().add_sample(target_root_dir, creation_args, dataset_attrs)
@@ -278,9 +363,10 @@ class VoxelizedMeshDataCreator(DataCreator):
         mesh_filename = creation_args.mesh_path.split("/")[-1].split(".off")[0]
         voxelized = voxels_mesh_conversions_utils.Mesh2VoxelsConvertor(creation_args.mesh_path, dataset_attrs["shape"]).padded_voxelized
 
-        self.voxelized_mesh_path = os.path.join(self.voxels_dir, mesh_filename + self.default_filename + ".npy")
+        filename = f"{self.prefix}_{mesh_filename}_{self.default_filename}"
+        self.voxelized_mesh_path = os.path.join(self.voxels_dir,  filename + ".npy")
         np.save(self.voxelized_mesh_path, voxelized)
-        setattr(file_paths, mesh_filename + self.default_filename, self.voxelized_mesh_path)
+        setattr(file_paths, filename, self.voxelized_mesh_path)
 
         return file_paths
 
@@ -309,7 +395,7 @@ class ThreeDVisDataCreator(DataCreator):
     def __init__(self, source_path:str, name:str, hirarchy_levels:int, file=None) -> None:
         super().__init__(source_path, name, hirarchy_levels)
         self.default_dirname = "3d_visualization"
-        self.default_filename = "TODO"
+        self.default_smooth_filename = "3d_smooth"
         self.file = file
     
 
@@ -318,19 +404,27 @@ class ThreeDVisDataCreator(DataCreator):
         self.output_dir = os.path.join(self.sample_dir, self.default_dirname)
         os.makedirs(self.output_dir, exist_ok=True)
 
-        img_sections_path = os.path.join(self.output_dir, f"scan_{self.default_filename}.jpg") 
-
-        
-        mesh_3d_visualization_utils.visualize_grid_of_lbo(
-            creation_args.smooth_mesh_verts, 
-            creation_args.smooth_mesh_faces, 
-            creation_args.smooth_mesh_eigevectors, 
+        file_paths.lbo_visualization = mesh_3d_visualization_utils.visualize_grid_of_lbo(   
+            verts=creation_args.smooth_mesh_verts, 
+            faces=creation_args.smooth_mesh_faces, 
+            eigenvectors=creation_args.smooth_mesh_eigenvectors, 
             dirpath=self.output_dir, 
-            prefix="smooth_",
-            max_lbos=self.creation_args.max_smooth_lbo_mesh_visualization)
+            max_lbos=creation_args.max_smooth_lbo_mesh_visualization,
+            mesh_or_pc='mesh',
+            prefix=self.default_smooth_filename,)
+
+        file_paths.clear_mesh_visualization = mesh_3d_visualization_utils.visualize_grid_of_lbo(   
+            verts=creation_args.smooth_mesh_verts, 
+            faces=creation_args.smooth_mesh_faces, 
+            eigenvectors=np.ones([creation_args.smooth_mesh_verts.shape[0], 1]), 
+            dirpath=self.output_dir, 
+            max_lbos=1,
+            mesh_or_pc='mesh',
+            prefix="smooth_clean_mesh")
         
-        # file_paths.scan_sections = img_sections_path
-        # # sections_image = sections_2d_visualization_utils.draw_2d_sections(creation_args.xyz_scan_arr, img_sections_path)
-        # file_paths = sections_2d_visualization_utils.draw_masks_and_contours(sections_image, creation_args.masks_data, self.sample_dir, file_paths)
-    
+        
         return file_paths
+
+
+
+

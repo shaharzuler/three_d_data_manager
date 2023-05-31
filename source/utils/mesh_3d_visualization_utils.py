@@ -10,35 +10,53 @@ import os
 from PIL import Image
 import torch
 import subprocess
-import tqdm
+from tqdm import tqdm
 from xvfbwrapper import Xvfb
 # from plotly.subplots import make_subplots
 import numpy as np
 import plotly.graph_objects as go
 from matplotlib import pyplot as plt
 from PIL import Image
+import plotly
 
 
-
-def visualize_grid_of_lbo(verts ,faces ,lbos ,max_lbos=None ,dirpath='/home/oefroni/dfaust_project/plots/' ,
-                          mesh_or_pc='mesh', prefix=''):
+# the following function is based on code from https://github.com/omriefroni/dfaust_allign/visualization/vizualization_functions.py
+def visualize_grid_of_lbo(verts ,faces ,eigenvectors ,dirpath, max_lbos=None  , mesh_or_pc='mesh', prefix='', write_html=True, save_image=True, save_plotly_json=True):
     imgs = []
+    paths = {
+        "jsons":[],
+        "imgs":[],
+        "htmls":[]
+    }
     max_lbos = max_lbos or 14
-    for eigvec_idx in tqdm(range(min(max_lbos, lbos.shape[1]))):
-        MeshVisualizer(dataset="").visualize_scalar_vector_on_shape(
+    
+    for eigvec_idx in tqdm(range(min(max_lbos, eigenvectors.shape[1]))):
+        save_path = os.path.join(dirpath, f'{prefix}_{eigvec_idx}')
+        fig:go.Figure = MeshVisualizer().visualize_scalar_vector_on_shape( 
             MeshContainer(verts, faces),
-            lbos[: ,eigvec_idx],
-            save_path=os.path.join(dirpath, f'{prefix}_{eigvec_idx}.png'),
+            eigenvectors[: ,eigvec_idx],
             mesh_or_pc=mesh_or_pc,
-            write_html=True
-            # max_scalar=lbos.max().item()
         )
-        imgs.append(torchvision.transforms.functional.to_tensor(Image.open(os.path.join(dirpath,
-                                                                                        f'{prefix}_{eigvec_idx}.png'))))
 
-    torchvision.utils.save_image(torch.stack(imgs), nrow=2, fp=os.path.join(dirpath, prefix + '_lbo_grid.png'),)
-    return os.path.join(dirpath,'lbo_grid.png')
+        if write_html:
+            fig.write_html(save_path + ".html") 
+            paths["htmls"].append(save_path + ".html")
+        if save_image:
+            fig.write_image(save_path + ".png")
+            paths["imgs"].append(save_path + ".png")
+        if save_plotly_json:
+            with open(save_path + ".json", 'w') as outfile:
+                outfile.write(plotly.io.to_json(fig, pretty=True))
+            paths["jsons"].append(save_path + ".json")
 
+        imgs.append(torchvision.transforms.functional.to_tensor(Image.open(save_path + ".png")))
+
+    torchvision.utils.save_image(torch.stack(imgs), nrow=2, fp=os.path.join(dirpath, f'{prefix}_lbo_grid.png'))
+
+    paths["lbo_grid"] = save_path + '_lbo_grid.png'
+    return paths
+
+# the following function is taken from https://github.com/omriefroni/dfaust_allign/visualization/mesh_visualizer.py
 def check_xvfb():
 
     comm = 'ps -ef | grep Xvfb | grep -v grep | cat'
@@ -49,6 +67,7 @@ def check_xvfb():
     else:
         return True
 
+# the following function is taken from https://github.com/omriefroni/dfaust_allign/visualization/mesh_utils.py
 def create_colormap(vert):
     """
     Creates a uniform color map on a mesh
@@ -70,19 +89,19 @@ def create_colormap(vert):
                                                                (maxy - miny)), ((vert[:, 2] - minz) / (maxz - minz))]).transpose()
     return colors
 
-
+# the following class is based on code from https://github.com/omriefroni/dfaust_allign/visualization/mesh_visualizer.py
 class MeshVisualizer:
     """Visualization class for meshs."""
 
-    def __init__(self, dataset="FAUST", display_up=False):
+    def __init__(self,  display_up=False): #dataset="FAUST",
         """
         The mesh visualization utility class
 
         Args:
-            dataset (str, optional): Name of the dataset, e.g. will effect view angle . Defaults to 'FAUST'.
+            # dataset (str, optional): Name of the dataset, e.g. will effect view angle . Defaults to 'FAUST'.
         """
-        self.dataset = dataset
-        self.scale = 0.8 if 'faust' in dataset else 0.2
+        # self.dataset = dataset
+        self.scale = 0.2
         # self.set_view_properties_by_dataset()
         if not check_xvfb():
             vdisplay = Xvfb()
@@ -120,8 +139,6 @@ class MeshVisualizer:
             sizemode="scaled",
             sizeref=2,
             anchor="tip",
-            # lighting=dict(ambient=0.4, diffuse=0.6, roughness=0.9,),
-            # lightposition=dict(z=5000),
         )
 
     def plotly_mesh(self, source_mesh, color_map_vis, mesh_or_pc="mesh"):
@@ -166,9 +183,7 @@ class MeshVisualizer:
             self,
             source_mesh,
             scalar_represent_color_vector,
-            save_path="output/tmp/vis_scalar_on_shape.png",
             max_scalar=None,
-            write_html=True,
             mesh_or_pc='mesh',
             normals=None
     ):
@@ -199,10 +214,6 @@ class MeshVisualizer:
         fig.update_layout(
             autosize=False, width=400, height=600,
         )
-        if write_html:
-            fig.write_html(save_path + ".html")
-        if save_path is not None:
-            fig.write_image(save_path)
 
         if self.display_eng is not None:
             self.display_eng.stop()
