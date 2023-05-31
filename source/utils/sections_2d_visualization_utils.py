@@ -82,8 +82,8 @@ def draw_masks_and_contours(sections_image:np.array, masks_data:list[dict[str, a
     return file_paths
 
 def draw_single_mask_and_contour(sections_image:np.array, contours_arr:np.array, n:int, mask_data:list[dict[str, any((str, np.array, tuple))]], target_root_dir:str, file_paths):#:FilePaths)-> tuple[np.array, FilePaths]:
-    mask_sections_path = os.path.join(target_root_dir, f"{n}_{mask_data['name']}.jpg")
-    setattr(file_paths, f"{n}_{mask_data['name']}", mask_sections_path)
+    mask_sections_path = os.path.join(target_root_dir, f"n{n}_{mask_data['name']}.jpg")
+    setattr(file_paths, f"n{n}_{mask_data['name']}", mask_sections_path)
 
     sections_mask = draw_mask(sections_image, mask_data, mask_sections_path) 
     contours_arr = draw_mask_contours(contours_arr, n, mask_data, sections_mask)

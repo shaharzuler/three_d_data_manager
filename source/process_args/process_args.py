@@ -1,30 +1,6 @@
 from dataclasses import dataclass
-import datetime
-import os
+import numpy as np
 
-# class Logger:
-#     def __init__(self, outputs_dir) -> None:
-#         self.outputs_dir = outputs_dir
-#         self.logger_file_path = os.path.join(self.outputs_dir, "log.txt")
-#         with open(self.logger_file_path, "w") as f:
-#             f.write(f'Logger {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}\n\n')
-
-#     def log(self, row, verbose):
-#         with open(self.logger_file_path, "a") as f:
-#             f.write(f"{row}\n")
-#         if verbose:
-#             print(row)
-
-# LOGGER = Logger(OUTPUTS_DIR)
-# def log(row:str, verbose=True):
-#     LOGGER.log(row, verbose)
-
-
-# @dataclass
-# class Logable:
-#     def __setattr__(self, name, value):
-#         super().__setattr__(name, value)
-#         log(f"{self.__doc__.split('(')[0]}.{name}: {value}")
 
 @dataclass
 class VoxelSmoothingArgs:#(Logable):
@@ -57,12 +33,12 @@ class SmoothMeshCreationArgs:#(Logable):
 class VoxelizingArgs:
     mesh_path: str
 
-import numpy as np
 
-@dataclass
-class MeshDownsampleCreationArgs:
-    max_num_points: int
-    original_mesh_name: str
+
+# @dataclass
+# class MeshDownsampleCreationArgs:
+#     max_num_points: int
+#     original_mesh_name: str
 
 @dataclass
 class TwoDVisArgs:
@@ -72,5 +48,10 @@ class TwoDVisArgs:
 @dataclass
 class ThreeDVisArgs:
     max_smooth_lbo_mesh_visualization: int
+
+@dataclass
+class H5DatasetArgs:
+    orig_name: str
+    override: bool = False
 
     
