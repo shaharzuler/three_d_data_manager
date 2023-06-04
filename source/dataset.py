@@ -6,10 +6,11 @@ from typing import Tuple
 import numpy as np
 
 from .file_paths import FilePaths
-from .data_creators import DataCreator
+from .data_creators import DataCreatorBase
 from .utils import mesh_utils, voxels_utils , sections_2d_visualization_utils
 
-#TODO concider merging add sample nd add sample from file
+# TODO concider merging add sample nd add sample from file
+# TODO sample name in getters and fileaths
 
 
 
@@ -20,14 +21,14 @@ class Dataset:
         os.makedirs(target_root_dir, exist_ok=True)
         self.file_paths = FilePaths()
 
-    def add_sample(self, data_creator:DataCreator, creation_args=None):
+    def add_sample(self, data_creator:DataCreatorBase, creation_args=None):
         self.file_paths = data_creator.add_sample(self.target_root_dir, self.file_paths,  creation_args, self.__dict__, )
         self.update_properties(data_creator)
 
-    def add_sample_from_file(self, data_creator:DataCreator, creation_args=None):
+    def add_sample_from_file(self, data_creator:DataCreatorBase, creation_args=None):
         self.file_paths = data_creator.add_sample_from_file(data_creator.file, self.target_root_dir, self.file_paths, creation_args, self.__dict__)
 
-    def update_properties(self, data_creator:DataCreator):
+    def update_properties(self, data_creator:DataCreatorBase):
         properties = data_creator.get_properties()
         for prop_name, prop_value in properties.items():
             setattr(self, prop_name, prop_value)

@@ -37,7 +37,7 @@ def draw_2d_sections(arr:np.array, save_path:str, pad_val = 10):
 
     return sections_image
 
-def draw_2d_mask_on_scan(sections_image:np.array, sections_mask:np.array, color:Tuple, save_path:str) -> np.array:
+def draw_2d_mask_on_scan(sections_image:np.array, sections_mask:np.array, color:tuple, save_path:str) -> np.array: #TODO fix sections color issue where they probably are rgb or float
     if len(sections_image.shape) == 2:
         img_rgb = cv2.cvtColor(sections_image, cv2.COLOR_GRAY2RGB) # H x W x 3
     sections_mask = sections_mask.astype(float)/255

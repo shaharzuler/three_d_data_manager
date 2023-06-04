@@ -5,7 +5,7 @@ import scipy.ndimage
 
 
 # original code from: https://github.com/gallif/_4DCTCostUnrolling with some modifications
-def get_filepaths_by_img_num(dir_name, img_num):
+def get_filepaths_from_img_num(dir_name, img_num):
     dir_name_for = dir_name + "/IM-00{:02}*.dcm".format(img_num)
     files = [file_name for file_name in glob.glob(dir_name_for, recursive=False)]
     return files
@@ -13,7 +13,7 @@ def get_filepaths_by_img_num(dir_name, img_num):
 
 # original code from: https://github.com/gallif/_4DCTCostUnrolling with some modifications
 def images_to_3d_arr(dir_name, img_num):
-    file_paths = get_filepaths_by_img_num(dir_name, img_num)
+    file_paths = get_filepaths_from_img_num(dir_name, img_num)
     slices = _get_dicom_slices(file_paths)
 
     # assuming all slices have the same pixel aspects
