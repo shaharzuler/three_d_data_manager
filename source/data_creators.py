@@ -1,6 +1,5 @@
 
-#TODO all creations only if doesnt exist
-#TODO split to files
+#TODO split to files (!)
 
 import os
 from typing import Dict
@@ -18,7 +17,7 @@ from .utils import dicom_utils, os_utils, mesh_utils, voxels_utils, LBO_utils, v
 
 
 class DataCreatorBase:
-    def __init__(self, source_path:str, name:str, hirarchy_levels:int, override:bool=False) -> None:
+    def __init__(self, source_path:str, name:str, hirarchy_levels:int, override:bool=True) -> None:
         self.source_path: str = source_path
         self.name: str = name
         self.hirarchy_levels: int = hirarchy_levels
@@ -94,6 +93,9 @@ class DicomDataCreator(DataCreatorBase):
         file_paths.dicom_dir = self.subject_dir
         file_paths.dicom_file_paths = self.dicom_target_file_paths
         
+        if creation_args is not None:
+            os_utils.write_config_file(self.subject_dir, self.default_dirname, asdict(creation_args))
+
         return file_paths
 
     def get_properties(self) -> Dict[str, any]:
@@ -119,9 +121,10 @@ class XYZArrDataCreator(ThreeDArrDataCreatorBase):
         if not self.check_if_exists_default_filename() or self.override:
             output_arr = self.get_xyz_arr_from_dicom(file_paths.dicom_dir)
             self.save_arr_default_filename(output_arr)
+            if creation_args is not None:
+                os_utils.write_config_file(self.subject_dir, self.default_filename, asdict(creation_args))
         else: 
             self.xyz_arr = np.load(self.arr_path)
-
 
         file_paths.xyz_arr = self.arr_path
         return file_paths
@@ -146,6 +149,9 @@ class XYZVoxelsMaskDataCreator(ThreeDArrDataCreatorBase):
 
             self.save_arr_default_filename(output_arr)
 
+            if creation_args is not None:
+                os_utils.write_config_file(self.subject_dir, self.default_filename, asdict(creation_args))
+
         file_paths.xyz_voxels_mask_raw = self.arr_path
         return file_paths
 
@@ -166,6 +172,8 @@ class ZXYVoxelsMaskDataCreator(ThreeDArrDataCreatorBase):
             output_arr = output_arr.astype(bool)
 
             self.save_arr_default_filename(output_arr)
+        if creation_args is not None:
+            os_utils.write_config_file(self.subject_dir, self.default_filename, asdict(creation_args))
 
         file_paths.zxy_voxels_mask_raw = self.arr_path
         return file_paths
@@ -185,7 +193,8 @@ class SmoothVoxelsMaskDataCreator(ThreeDArrDataCreatorBase):
             output_arr = voxels_utils.fill_holes(masks_arr=xyz_voxels_mask_smooth, area_threshold=creation_args.fill_holes_Area_threshold)
 
             self.save_arr_default_filename(output_arr)
-            os_utils.write_config_file(self.subject_dir, self.default_filename, asdict(creation_args)) #todo check all args if not non do config
+            if creation_args is not None:
+                os_utils.write_config_file(self.subject_dir, self.default_filename, asdict(creation_args)) 
 
         file_paths.xyz_voxels_mask_smooth = self.arr_path
 
@@ -206,7 +215,8 @@ class MeshDataCreator(MeshDataCreatorBase):
             output_verts, output_faces, normals, values = voxels_mesh_conversions_utils.voxels_mask_to_mesh(xyz_voxels_mask_smooth, creation_args.marching_cubes_step_size)
 
             self.save_mesh_default_filename(output_verts, output_faces)
-            os_utils.write_config_file(self.subject_dir, self.default_filename, asdict(creation_args))
+            if creation_args is not None:
+                os_utils.write_config_file(self.subject_dir, self.default_filename, asdict(creation_args))
 
         file_paths.mesh = self.mesh_path
         return file_paths
@@ -219,12 +229,13 @@ class SmoothLBOMeshDataCreator(MeshDataCreatorBase):
 
     def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None) -> FilePaths:
         super().add_sample(target_root_dir, creation_args, dataset_attrs)
-        if not self.check_if_exists_default_filename() or  self.override:
+        if not self.check_if_exists_default_filename() or self.override:
             verts, faces = mesh_utils.read_off(file_paths.mesh)
             output_verts, output_faces = self._smooth_with_lbo(creation_args, verts, faces)
 
             self.save_mesh_default_filename(output_verts, output_faces)
-            os_utils.write_config_file(self.subject_dir, self.default_filename, asdict(creation_args)) 
+            if creation_args is not None:
+                os_utils.write_config_file(self.subject_dir, self.default_filename, asdict(creation_args)) 
 
         file_paths.mesh_smooth = self.mesh_path
 
@@ -253,6 +264,8 @@ class ConvexMeshDataCreator(MeshDataCreatorBase):
             output_verts, output_faces = self._convexify(verts)
 
             self.save_mesh_default_filename(output_verts, output_faces)
+            if creation_args is not None:
+                os_utils.write_config_file(self.subject_dir, self.default_filename, asdict(creation_args))
         
         file_paths.mesh_convex = self.mesh_path
 
@@ -281,7 +294,8 @@ class LBOsDataCreator(DataCreatorBase):
             LBO = LBO_utils.LBOcalc(k=creation_args.num_LBOs, use_torch=creation_args.use_torch, is_point_cloud=creation_args.is_point_cloud)
             self.eigenvectors, self.eigenvalues, self.area_weights = LBO.get_LBOs(*mesh_utils.read_off(creation_args.mesh_path))
             np.savez(self.lbo_data_path, eigenvectors=self.eigenvectors, eigenvalues=self.eigenvalues, area_weights=self.area_weights)
-            os_utils.write_config_file(self.subject_dir, filename, asdict(creation_args)) 
+            if creation_args is not None:
+                os_utils.write_config_file(self.subject_dir, filename, asdict(creation_args)) 
            
         setattr(file_paths, filename, self.lbo_data_path)
 
@@ -303,6 +317,8 @@ class VoxelizedMeshDataCreator(ThreeDArrDataCreatorBase):
         if not self.check_if_exists(filename) or self.override:
             output_arr = voxels_mesh_conversions_utils.Mesh2VoxelsConvertor(creation_args.mesh_path, dataset_attrs["shape"]).padded_voxelized
             self.save_arr(output_arr, filename) 
+            if creation_args is not None:
+                os_utils.write_config_file(self.subject_dir, f"{self.prefix}_{self.default_filename}", asdict(creation_args))
 
         setattr(file_paths, filename, self.arr_path)
 
@@ -314,13 +330,15 @@ class TwoDVisDataCreator(DataCreatorBase):
         self.default_dirname = "2d_sections_visualization"
         self.default_filename = "2d_sections"
 
-    def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None) -> FilePaths:
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:Dict[str,str]=None) -> FilePaths: #override will not work here
         super().add_sample(target_root_dir, creation_args, dataset_attrs)
         img_sections_path = os.path.join(self.subject_dir, f"scan_{self.default_filename}.jpg") 
         file_paths.scan_sections = img_sections_path
-        if not self.check_if_exists(img_sections_path) or self.override:
-            sections_image = sections_2d_visualization_utils.draw_2d_sections(creation_args.xyz_scan_arr, img_sections_path)
-            file_paths = sections_2d_visualization_utils.draw_masks_and_contours(sections_image, creation_args.masks_data, self.subject_dir, file_paths)
+        sections_image = sections_2d_visualization_utils.draw_2d_sections(creation_args.xyz_scan_arr, img_sections_path)
+        file_paths = sections_2d_visualization_utils.draw_masks_and_contours(sections_image, creation_args.masks_data, self.subject_dir, file_paths)
+
+        if creation_args is not None:
+            os_utils.write_config_file(self.subject_dir, self.default_filename, asdict(creation_args))
     
         return file_paths
 
@@ -351,6 +369,9 @@ class ThreeDVisDataCreator(DataCreatorBase):
             mesh_or_pc='mesh',
             prefix="smooth_clean_mesh")
         
+        if creation_args is not None:
+            os_utils.write_config_file(self.subject_dir, self.default_smooth_filename, asdict(creation_args))
+
         return file_paths
 
 class H5DataCreator(DataCreatorBase):
@@ -380,6 +401,9 @@ class H5DataCreator(DataCreatorBase):
         out_h5.create_dataset(self.name + "_eigenvalus"  , data=lbo_data["eigenvalues"] , compression="gzip")
 
         out_h5.close()
+
+        if creation_args is not None:
+            os_utils.write_config_file(self.subject_dir, filename, asdict(creation_args))
 
         setattr(file_paths, filename, self.dataset_path)
 

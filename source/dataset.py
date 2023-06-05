@@ -1,4 +1,3 @@
-#TODO maybe user desides which format gets saved and which is created on the fly.
 
 import os
 from typing import Tuple
@@ -9,8 +8,9 @@ from .file_paths import FilePaths
 from .data_creators import DataCreatorBase
 from .utils import mesh_utils, voxels_utils , sections_2d_visualization_utils
 
-# TODO concider merging add sample nd add sample from file
-# TODO sample name in getters and fileaths
+# TODO sample name in getters and fileaths (!)
+# TODO maybe user desides which format gets saved and which is created on the fly. (*)
+
 
 
 
