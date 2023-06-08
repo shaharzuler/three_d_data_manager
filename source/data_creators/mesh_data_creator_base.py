@@ -9,8 +9,8 @@ from three_d_data_manager.source.utils import mesh_utils
 
 
 class MeshDataCreatorBase(DataCreatorBase):
-    def __init__(self, source_path:str, sample_name:str, hirarchy_levels:int) -> None:
-        super().__init__(source_path, sample_name, hirarchy_levels)
+    def __init__(self, source_path:str, sample_name:str, hirarchy_levels:int, creation_args=None) -> None:
+        super().__init__(source_path, sample_name, hirarchy_levels, creation_args=creation_args)
 
     def check_if_exists_default_filename(self) -> bool:
         self.mesh_path = os.path.join(self.subject_dir, self.default_filename + ".off") 

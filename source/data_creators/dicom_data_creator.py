@@ -9,12 +9,12 @@ from three_d_data_manager.source.utils import dicom_utils, os_utils
 
 
 class DicomDataCreator(DataCreatorBase):
-    def __init__(self, source_path:str, sample_name:str, hirarchy_levels:int) -> None:
-        super().__init__(source_path, sample_name, hirarchy_levels)
+    def __init__(self, source_path:str, sample_name:str, hirarchy_levels:int, creation_args=None) -> None:
+        super().__init__(source_path, sample_name, hirarchy_levels, creation_args=creation_args)
         self.default_dirname = "DICOM"
     
-    def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:dict[str,str]=None) -> FilePaths:
-        super().add_sample(target_root_dir, creation_args, dataset_attrs)
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:dict[str,str]=None) -> FilePaths:
+        super().add_sample(target_root_dir, dataset_attrs)
 
         try:
             dicom_source_file_paths = dicom_utils.get_filepaths_from_img_num(self.source_path, int(self.sample_name))
@@ -27,8 +27,8 @@ class DicomDataCreator(DataCreatorBase):
         file_paths.add_path("dicom_dir",  self.sample_name, self.subject_dir)
         file_paths.add_path("dicom_file_paths",  self.sample_name, self.dicom_target_file_paths)
         
-        if creation_args is not None:
-            os_utils.write_config_file(self.subject_dir, self.default_dirname, asdict(creation_args))
+        if self.creation_args is not None:
+            os_utils.write_config_file(self.subject_dir, self.default_dirname, asdict(self.creation_args))
 
         return file_paths
 

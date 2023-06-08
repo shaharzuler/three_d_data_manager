@@ -19,8 +19,8 @@ class Dataset:
         else:
             self.file_paths = FilePaths()
 
-    def add_sample(self, data_creator:DataCreatorBase, creation_args=None):
-        self.file_paths = data_creator.add_sample(self.target_root_dir, self.file_paths,  creation_args, self.__dict__, )
+    def add_sample(self, data_creator:DataCreatorBase):
+        self.file_paths = data_creator.add_sample(self.target_root_dir, self.file_paths, self.__dict__, )
         self.update_properties(data_creator)
 
     def update_properties(self, data_creator:DataCreatorBase):
@@ -92,9 +92,9 @@ class Dataset:
         voxels_convex_mesh = np.load(self.file_paths.xyz_convex_mesh_voxelized[name])    
         return voxels_convex_mesh
 
-    def visualize_existing_data_sections(self, two_d_visualization_data_creator, two_d_visualization_args):
-        two_d_visualization_args.xyz_scan_arr = self.get_xyz_arr(two_d_visualization_data_creator.sample_name)
-        two_d_visualization_args.masks_data = [
+    def visualize_existing_data_sections(self, two_d_visualization_data_creator):
+        two_d_visualization_data_creator.creation_args.xyz_scan_arr = self.get_xyz_arr(two_d_visualization_data_creator.sample_name)
+        two_d_visualization_data_creator.creation_args.masks_data = [
             {
                 "name": "raw_mask_sections",
                 "arr": self.get_xyz_voxels_mask(two_d_visualization_data_creator.sample_name),
@@ -121,13 +121,13 @@ class Dataset:
                 "color": sections_2d_visualization_utils.colors.GREEN_RGB
             },
         ]
-        self.add_sample(two_d_visualization_data_creator, two_d_visualization_args)
+        self.add_sample(two_d_visualization_data_creator)
 
-    def visualize_existing_data_3d(self, three_d_visualization_data_creator, three_d_visualization_args):
-        three_d_visualization_args.smooth_mesh_verts, three_d_visualization_args.smooth_mesh_faces = self.get_smooth_mesh(three_d_visualization_data_creator.sample_name)
-        three_d_visualization_args.smooth_mesh_eigenvectors = self.get_mesh_lbo_data(three_d_visualization_data_creator.sample_name)[0]
+    def visualize_existing_data_3d(self, three_d_visualization_data_creator):
+        three_d_visualization_data_creator.creation_args.smooth_mesh_verts, three_d_visualization_data_creator.creation_args.smooth_mesh_faces = self.get_smooth_mesh(three_d_visualization_data_creator.sample_name)
+        three_d_visualization_data_creator.creation_args.smooth_mesh_eigenvectors = self.get_mesh_lbo_data(three_d_visualization_data_creator.sample_name)[0]
 
-        self.add_sample(three_d_visualization_data_creator, three_d_visualization_args)
+        self.add_sample(three_d_visualization_data_creator)
 
 
 

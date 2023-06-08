@@ -84,10 +84,11 @@ voxel_smoothing_args = VoxelSmoothingCreationArgs(
 smooth_voxel_mask_data_creator = SmoothVoxelsMaskDataCreator(
     source_path=None, 
     sample_name=sample_name, 
-    hirarchy_levels=2
+    hirarchy_levels=2,
+    creation_args=voxel_smoothing_args
 )
 
-dataset.add_sample(smooth_voxel_mask_data_creator, voxel_smoothing_args)
+dataset.add_sample(smooth_voxel_mask_data_creator)
 ```
 The resulting numpy 3D mask will be saved to: <br>
 `target/path/to/dataset/18/orig/voxels/xyz_voxels_mask_smooth.npy` <br>
@@ -102,10 +103,11 @@ mesh_creation_args = MeshSmoothingCreationArgs(marching_cubes_step_size=1)
 mesh_data_creator = MeshDataCreator(
     source_path=None, 
     sample_name=sample_name, 
-    hirarchy_levels=2
+    hirarchy_levels=2,
+    creation_args=mesh_creation_args
 )
 
-dataset.add_sample(mesh_data_creator, mesh_creation_args) 
+dataset.add_sample(mesh_data_creator) 
 ```
 An off file of the mesh will be saved to: <br>
 `target/path/to/dataset/18/orig/meshes/mesh.off` <br>
@@ -125,10 +127,11 @@ lbo_creation_args = LBOCreationArgs(
 lbos_data_creator = LBOsDataCreator(
     source_path=None, 
     sample_name=sample_name, 
-    hirarchy_levels=2
+    hirarchy_levels=2,
+    creation_args=lbo_creation_args
 )
 
-dataset.add_sample(lbos_data_creator, lbo_creation_args)
+dataset.add_sample(lbos_data_creator)
 
 ```
 LBO eigenvectors, eigenvalues and area weights will be saved to: <br>
@@ -146,10 +149,11 @@ h5_dataset_creation_args = H5DatasetCreationArgs(
 h5_dataset_data_creator = H5DataCreator(
     source_path=None, 
     sample_name=sample_name, 
-    hirarchy_levels=2
+    hirarchy_levels=2,
+    creation_args=h5_dataset_creation_args
 )
 
-dataset.add_sample(h5_dataset_data_creator, h5_dataset_creation_args)
+dataset.add_sample(h5_dataset_data_creator)
 ```
 The H5 file will be saved to: <br>
 `target/path/to/dataset/18/orig/h5_datasets/mesh_dataset.h5df` <br>
@@ -163,10 +167,11 @@ smooth_mesh_creation_args = SmoothMeshCreationArgs(
 smooth_lbo_mesh_data_creator = SmoothLBOMeshDataCreator(
     source_path=None, 
     sample_name=sample_name, 
-    hirarchy_levels=2
+    hirarchy_levels=2,
+    creation_args=smooth_mesh_creation_args
 )
 
-dataset.add_sample(smooth_lbo_mesh_data_creator, smooth_mesh_creation_args)
+dataset.add_sample(smooth_lbo_mesh_data_creator)
 ```
 The smoothed mesh will be saved to: <br>
 `target/path/to/dataset/18/orig/meshes/smooth_mesh.off` <br>
@@ -182,10 +187,11 @@ smooth_mesh_voxelizing_args = VoxelizingCreationArgs(
 voxelized_smooth_mesh_data_creator = VoxelizedMeshDataCreator(
     source_path=None, 
     sample_name=sample_name, 
-    hirarchy_levels=2
+    hirarchy_levels=2,
+    creation_args=smooth_mesh_voxelizing_args
 )
 
-dataset.add_sample(voxelized_smooth_mesh_data_creator, smooth_mesh_voxelizing_args)
+dataset.add_sample(voxelized_smooth_mesh_data_creator)
 ```
 The voxelized version of the mesh, in the dimension of the original voxel mask, will be saved to: <br>
 `target/path/to/dataset/18/orig/voxels/xyz_smooth_mesh_voxelized.npy` <br>
@@ -202,10 +208,11 @@ smooth_lbo_creation_args = LBOCreationArgs(
 smooth_lbos_data_creator = LBOsDataCreator(
     source_path=None,
     sample_name=sample_name, 
-    hirarchy_levels=2
+    hirarchy_levels=2,
+    creation_args=smooth_lbo_creation_args
 )
 
-dataset.add_sample(smooth_lbos_data_creator, smooth_lbo_creation_args)
+dataset.add_sample(smooth_lbos_data_creator)
 ```
 
 LBO eigenvectors, eigenvalues and area weights will be saved to: <br>
@@ -229,9 +236,11 @@ convex_mesh_voxelizing_args = VoxelizingCreationArgs(
 voxelized_convex_mesh_data_creator = VoxelizedMeshDataCreator(
     source_path=None, 
     sample_name=sample_name, 
-    hirarchy_levels=2)
+    hirarchy_levels=2,
+    creation_args=convex_mesh_voxelizing_args
+)
 
-dataset.add_sample(voxelized_convex_mesh_data_creator, convex_mesh_voxelizing_args)
+dataset.add_sample(voxelized_convex_mesh_data_creator)
 ```
 The convex hull mesh will be saved to: <br>
 `target/path/to/dataset/18/orig/meshes/convex_mesh.off` <br>
@@ -250,20 +259,22 @@ two_d_visualization_args = TwoDVisualizationCreationArgs()
 two_d_visualization_data_creator = TwoDVisDataCreator(
     source_path=None, 
     sample_name=sample_name, 
-    hirarchy_levels=2
+    hirarchy_levels=2,
+    creation_args=two_d_visualization_args
 )
 
-dataset.visualize_existing_data_sections(two_d_visualization_data_creator, two_d_visualization_args)
+dataset.visualize_existing_data_sections(two_d_visualization_data_creator)
 
 three_d_vizualisation_args = ThreeDVisualizationCreationArgs(max_smooth_lbo_mesh_visualization=6)
 
 three_d_visualization_data_creator = ThreeDVisDataCreator(
     source_path=None, 
     sample_name=sample_name, 
-    hirarchy_levels=2
+    hirarchy_levels=2,
+    creation_args=three_d_vizualisation_args
 )
 
-dataset.visualize_existing_data_3d(three_d_visualization_data_creator, three_d_vizualisation_args)
+dataset.visualize_existing_data_3d(three_d_visualization_data_creator)
 
 ```
 3 main sections of the scan without and with all versions of segmentation masks will be saved to: <br>
@@ -362,3 +373,4 @@ The final result for timestep 18 will be as follows:
         ├── xyz_voxels_mask_smooth_config.json
         ├── xyz_voxels_mask_smooth.npy
         └── zxy_voxels_mask_raw.npy
+</pre>

@@ -9,22 +9,22 @@ from three_d_data_manager.source.utils import mesh_utils, os_utils
 
 
 class H5DataCreator(DataCreatorBase):
-    def __init__(self, source_path:str, sample_name:str, hirarchy_levels:int) -> None:
-        super().__init__(source_path, sample_name, hirarchy_levels)
+    def __init__(self, source_path:str, sample_name:str, hirarchy_levels:int, creation_args=None) -> None:
+        super().__init__(source_path, sample_name, hirarchy_levels, creation_args=creation_args)
         self.default_dirname = "h5_datasets"
         self.default_filename = "dataset" 
     
-    def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:dict[str,str]=None) -> FilePaths:
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:dict[str,str]=None) -> FilePaths:
         # loading from source_path is not implemented for this class
-        super().add_sample(target_root_dir, creation_args, dataset_attrs)
+        super().add_sample(target_root_dir, dataset_attrs)
 
-        filename = f"{creation_args.orig_name}_{self.default_filename}"
+        filename = f"{self.creation_args.orig_name}_{self.default_filename}"
         self.dataset_path = os.path.join(self.subject_dir, filename + ".hdf5")
-        writing_mode = "w" if creation_args.override else "a" # override works differently here. it will perform and append if file exists. existing keys will be overwritten anyway.
+        writing_mode = "w" if self.creation_args.override else "a" # override works differently here. it will perform and append if file exists. existing keys will be overwritten anyway.
 
-        mesh_path = getattr(file_paths, creation_args.orig_name)[self.sample_name]
+        mesh_path = getattr(file_paths, self.creation_args.orig_name)[self.sample_name]
         vertices, faces = mesh_utils.read_off(mesh_path)
-        lbo_data_path = getattr(file_paths, creation_args.orig_name+"_lbo_data")[self.sample_name]
+        lbo_data_path = getattr(file_paths, self.creation_args.orig_name+"_lbo_data")[self.sample_name]
         lbo_data = np.load(lbo_data_path)
 
         out_h5 = h5py.File(self.dataset_path, writing_mode)
@@ -37,8 +37,8 @@ class H5DataCreator(DataCreatorBase):
 
         out_h5.close()
 
-        if creation_args is not None:
-            os_utils.write_config_file(self.subject_dir, filename, asdict(creation_args))
+        if self.creation_args is not None:
+            os_utils.write_config_file(self.subject_dir, filename, asdict(self.creation_args))
 
         file_paths.add_path(filename, self.sample_name, self.dataset_path)
 
