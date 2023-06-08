@@ -1,0 +1,33 @@
+from dataclasses import asdict
+import scipy
+
+import numpy as np
+
+from .three_d_arr_data_creator_base import ThreeDArrDataCreatorBase
+from three_d_data_manager.source.file_paths import FilePaths
+from three_d_data_manager.source.utils import voxels_utils, os_utils
+
+
+class ZXYVoxelsMaskDataCreator(ThreeDArrDataCreatorBase):
+    def __init__(self, source_path:str, sample_name:str, hirarchy_levels:int) -> None:
+        super().__init__(source_path, sample_name, hirarchy_levels)
+        self.default_dirname = "voxels"
+        self.default_filename = "zxy_voxels_mask_raw"
+    
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, creation_args=None, dataset_attrs:dict[str,str]=None) -> FilePaths:
+        super().add_sample(target_root_dir, creation_args, dataset_attrs)
+        if not self.check_if_exists_default_filename() or self.override:
+            output_arr = np.load(self.source_path)
+            if voxels_utils.zxy_to_xyz(output_arr).shape != dataset_attrs["shape"]:
+                if "voxel_size" in dataset_attrs:
+                    voxel_size_zxy = dataset_attrs["voxel_size"][2], dataset_attrs["voxel_size"][0], dataset_attrs["voxel_size"][1]
+                    output_arr = scipy.ndimage.zoom(output_arr, voxel_size_zxy)
+            output_arr = output_arr.astype(bool)
+
+            self.save_arr_default_filename(output_arr)
+        if creation_args is not None:
+            os_utils.write_config_file(self.subject_dir, self.default_filename, asdict(creation_args))
+
+        file_paths.add_path("zxy_voxels_mask_raw",  self.sample_name, self.arr_path)
+
+        return file_paths
