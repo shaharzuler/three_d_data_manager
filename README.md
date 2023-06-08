@@ -287,7 +287,7 @@ voxelized_convex_mesh = dataset.get_voxelized_convex_mesh(sample_name)
 
 ## Conclusion
 The final result for timestep 18 will be as follows:
-
+<pre>
 .
 └── orig
     ├── 2d_sections_visualization
