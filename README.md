@@ -287,6 +287,162 @@ voxelized_convex_mesh = dataset.get_voxelized_convex_mesh(sample_name)
 
 ## Conclusion
 The final result for timestep 18 will be as follows:
- ```
-                                                                               .                                                                                                                       └── orig                                                                                                                    ├── 2d_sections_visualization                                                                                           │   ├── 2d_sections_config.json                                                                                         │   ├── n0_raw_mask_sections.jpg                                                                                        │   ├── n1_smooth_by_voxels_mask_sections.jpg                                                                           │   ├── n2_mesh_mask_sections.jpg                                                                                       │   ├── n3_smooth_by_lbo_mask_sections.jpg                                                                              │   ├── n4_convex_mask_sections.jpg                                                                                     │   ├── scan_2d_sections.jpg                                                                                            │   └── section_contours.jpg                                                                                            ├── 3d_visualization                                                                                                    │   ├── 3d_smooth_0.html                                                                                                │   ├── 3d_smooth_0.json                                                                                                │   ├── 3d_smooth_0.png                                                                                                 │   ├── 3d_smooth_1.html                                                                                                │   ├── 3d_smooth_1.json                                                                                                │   ├── 3d_smooth_1.png                                                                                                 │   ├── 3d_smooth_2.html                                                                                                │   ├── 3d_smooth_2.json                                                                                                │   ├── 3d_smooth_2.png                                                                                                 │   ├── 3d_smooth_3.html                                                                                                │   ├── 3d_smooth_3.json                                                                                                │   ├── 3d_smooth_3.png                                                                                                 │   ├── 3d_smooth_4.html                                                                                                │   ├── 3d_smooth_4.json                                                                                                │   ├── 3d_smooth_4.png                                                                                                 │   ├── 3d_smooth_5.html                                                                                                │   ├── 3d_smooth_5.json                                                                                                │   ├── 3d_smooth_5.png                                                                                                 │   ├── 3d_smooth_config.json                                                                                           │   ├── 3d_smooth_lbo_grid.png                                                                                          │   ├── smooth_clean_mesh_0.html                                                                                        │   ├── smooth_clean_mesh_0.json                                                                                        │   ├── smooth_clean_mesh_0.png                                                                                         │   └── smooth_clean_mesh_lbo_grid.png                                                                                  ├── DICOM                                                                                                               │   ├── IM-0018-0911-0001.dcm                                                                                           │   ├── IM-0018-0912-0001.dcm                                                                                           │   ├── IM-0018-0913-0001.dcm                                                                                           │   ├── IM-0018-0914-0001.dcm                                                                                           │   ├── IM-0018-0915-0001.dcm                                                                                           │   ├── IM-0018-0916-0001.dcm                                                                                           │   ├── IM-0018-0917-0001.dcm                                                                                           │   ├── IM-0018-0918-0001.dcm                                                                                           │   ├── IM-0018-0919-0001.dcm                                                                                           │   ├── IM-0018-1000-0001.dcm                                                                                           │   └── IM-0018-1001-0001.dcm                                                                                           ├── h5_datasets                                                                                                         │   ├── mesh_convex_dataset_config.json                                                                                 │   ├── mesh_convex_dataset.hdf5                                                                                        │   ├── mesh_dataset_config.json                                                                                        │   ├── mesh_dataset.hdf5                                                                                               │   ├── mesh_smooth_dataset_config.json                                                                                 │   └── mesh_smooth_dataset.hdf5                                                                                        ├── lbos                                                                                                                │   ├── mesh_convex_lbo_data_config.json                                                                                │   ├── mesh_convex_lbo_data.npz                                                                                        │   ├── mesh_lbo_data_config.json                                                                                       │   ├── mesh_lbo_data.npz                                                                                               │   ├── mesh_smooth_lbo_data_config.json                                                                                │   └── mesh_smooth_lbo_data.npz                                                                                        ├── meshes                                                                                                              │   ├── convex_mesh.off                                                                                                 │   ├── mesh_config.json                                                                                                │   ├── mesh.off                                                                                                        │   ├── smooth_mesh_config.json                                                                                         │   └── smooth_mesh.off                                                                                                 └── voxels                                                                                                                  ├── xyz_arr_raw.npy                                                                                                     ├── xyz_convex_mesh_voxelized.npy                                                                                       ├── xyz_mesh_voxelized.npy                                                                                              ├── xyz_smooth_mesh_voxelized.npy                                                                                       ├── xyz_voxelized_config.json                                                                                           ├── xyz_voxels_mask_raw.npy                                                                                             ├── xyz_voxels_mask_smooth_config.json                                                                                  ├── xyz_voxels_mask_smooth.npy                                                                                          └── zxy_voxels_mask_raw.npy                                                                                                                                   
- ```
+
+.
+└── orig
+    ├── 2d_sections_visualization
+    │   ├── 2d_sections_config.json
+    │   ├── n0_raw_mask_sections.jpg
+    │   ├── n1_smooth_by_voxels_mask_sections.jpg
+    │   ├── n2_mesh_mask_sections.jpg
+    │   ├── n3_smooth_by_lbo_mask_sections.jpg
+    │   ├── n4_convex_mask_sections.jpg
+    │   ├── scan_2d_sections.jpg
+    │   └── section_contours.jpg
+    ├── 3d_visualization
+    │   ├── 3d_smooth_0.html
+    │   ├── 3d_smooth_0.json
+    │   ├── 3d_smooth_0.png
+    │   ├── 3d_smooth_1.html
+    │   ├── 3d_smooth_1.json
+    │   ├── 3d_smooth_1.png
+    │   ├── 3d_smooth_2.html
+    │   ├── 3d_smooth_2.json
+    │   ├── 3d_smooth_2.png
+    │   ├── 3d_smooth_3.html
+    │   ├── 3d_smooth_3.json
+    │   ├── 3d_smooth_3.png
+    │   ├── 3d_smooth_4.html
+    │   ├── 3d_smooth_4.json
+    │   ├── 3d_smooth_4.png
+    │   ├── 3d_smooth_5.html
+    │   ├── 3d_smooth_5.json
+    │   ├── 3d_smooth_5.png
+    │   ├── 3d_smooth_config.json
+    │   ├── 3d_smooth_lbo_grid.png
+    │   ├── smooth_clean_mesh_0.html
+    │   ├── smooth_clean_mesh_0.json
+    │   ├── smooth_clean_mesh_0.png
+    │   └── smooth_clean_mesh_lbo_grid.png
+    ├── DICOM
+    │   ├── IM-0018-0911-0001.dcm
+    │   ├── IM-0018-0912-0001.dcm
+    │   ├── IM-0018-0913-0001.dcm
+    │   ├── IM-0018-0914-0001.dcm
+    │   ├── IM-0018-0915-0001.dcm
+    │   ├── IM-0018-0916-0001.dcm
+    │   ├── IM-0018-0917-0001.dcm
+    │   ├── IM-0018-0918-0001.dcm
+    │   ├── IM-0018-0919-0001.dcm
+    │   ├── IM-0018-0920-0001.dcm
+    │   ├── IM-0018-0921-0001.dcm
+    │   ├── IM-0018-0922-0001.dcm
+    │   ├── IM-0018-0923-0001.dcm
+    │   ├── IM-0018-0924-0001.dcm
+    │   ├── IM-0018-0925-0001.dcm
+    │   ├── IM-0018-0926-0001.dcm
+    │   ├── IM-0018-0927-0001.dcm
+    │   ├── IM-0018-0928-0001.dcm
+    │   ├── IM-0018-0929-0001.dcm
+    │   ├── IM-0018-0930-0001.dcm
+    │   ├── IM-0018-0931-0001.dcm
+    │   ├── IM-0018-0932-0001.dcm
+    │   ├── IM-0018-0933-0001.dcm
+    │   ├── IM-0018-0934-0001.dcm
+    │   ├── IM-0018-0935-0001.dcm
+    │   ├── IM-0018-0936-0001.dcm
+    │   ├── IM-0018-0937-0001.dcm
+    │   ├── IM-0018-0938-0001.dcm
+    │   ├── IM-0018-0939-0001.dcm
+    │   ├── IM-0018-0940-0001.dcm
+    │   ├── IM-0018-0941-0001.dcm
+    │   ├── IM-0018-0942-0001.dcm
+    │   ├── IM-0018-0943-0001.dcm
+    │   ├── IM-0018-0944-0001.dcm
+    │   ├── IM-0018-0945-0001.dcm
+    │   ├── IM-0018-0946-0001.dcm
+    │   ├── IM-0018-0947-0001.dcm
+    │   ├── IM-0018-0948-0001.dcm
+    │   ├── IM-0018-0949-0001.dcm
+    │   ├── IM-0018-0950-0001.dcm
+    │   ├── IM-0018-0951-0001.dcm
+    │   ├── IM-0018-0952-0001.dcm
+    │   ├── IM-0018-0953-0001.dcm
+    │   ├── IM-0018-0954-0001.dcm
+    │   ├── IM-0018-0955-0001.dcm
+    │   ├── IM-0018-0956-0001.dcm
+    │   ├── IM-0018-0957-0001.dcm
+    │   ├── IM-0018-0958-0001.dcm
+    │   ├── IM-0018-0959-0001.dcm
+    │   ├── IM-0018-0960-0001.dcm
+    │   ├── IM-0018-0961-0001.dcm
+    │   ├── IM-0018-0962-0001.dcm
+    │   ├── IM-0018-0963-0001.dcm
+    │   ├── IM-0018-0964-0001.dcm
+    │   ├── IM-0018-0965-0001.dcm
+    │   ├── IM-0018-0966-0001.dcm
+    │   ├── IM-0018-0967-0001.dcm
+    │   ├── IM-0018-0968-0001.dcm
+    │   ├── IM-0018-0969-0001.dcm
+    │   ├── IM-0018-0970-0001.dcm
+    │   ├── IM-0018-0971-0001.dcm
+    │   ├── IM-0018-0972-0001.dcm
+    │   ├── IM-0018-0973-0001.dcm
+    │   ├── IM-0018-0974-0001.dcm
+    │   ├── IM-0018-0975-0001.dcm
+    │   ├── IM-0018-0976-0001.dcm
+    │   ├── IM-0018-0977-0001.dcm
+    │   ├── IM-0018-0978-0001.dcm
+    │   ├── IM-0018-0979-0001.dcm
+    │   ├── IM-0018-0980-0001.dcm
+    │   ├── IM-0018-0981-0001.dcm
+    │   ├── IM-0018-0982-0001.dcm
+    │   ├── IM-0018-0983-0001.dcm
+    │   ├── IM-0018-0984-0001.dcm
+    │   ├── IM-0018-0985-0001.dcm
+    │   ├── IM-0018-0986-0001.dcm
+    │   ├── IM-0018-0987-0001.dcm
+    │   ├── IM-0018-0988-0001.dcm
+    │   ├── IM-0018-0989-0001.dcm
+    │   ├── IM-0018-0990-0001.dcm
+    │   ├── IM-0018-0991-0001.dcm
+    │   ├── IM-0018-0992-0001.dcm
+    │   ├── IM-0018-0993-0001.dcm
+    │   ├── IM-0018-0994-0001.dcm
+    │   ├── IM-0018-0995-0001.dcm
+    │   ├── IM-0018-0996-0001.dcm
+    │   ├── IM-0018-0997-0001.dcm
+    │   ├── IM-0018-0998-0001.dcm
+    │   ├── IM-0018-0999-0001.dcm
+    │   ├── IM-0018-1000-0001.dcm
+    │   └── IM-0018-1001-0001.dcm
+    ├── h5_datasets
+    │   ├── mesh_convex_dataset_config.json
+    │   ├── mesh_convex_dataset.hdf5
+    │   ├── mesh_dataset_config.json
+    │   ├── mesh_dataset.hdf5
+    │   ├── mesh_smooth_dataset_config.json
+    │   └── mesh_smooth_dataset.hdf5
+    ├── lbos
+    │   ├── mesh_convex_lbo_data_config.json
+    │   ├── mesh_convex_lbo_data.npz
+    │   ├── mesh_lbo_data_config.json
+    │   ├── mesh_lbo_data.npz
+    │   ├── mesh_smooth_lbo_data_config.json
+    │   └── mesh_smooth_lbo_data.npz
+    ├── meshes
+    │   ├── convex_mesh.off
+    │   ├── mesh_config.json
+    │   ├── mesh.off
+    │   ├── smooth_mesh_config.json
+    │   └── smooth_mesh.off
+    └── voxels
+        ├── xyz_arr_raw.npy
+        ├── xyz_convex_mesh_voxelized.npy
+        ├── xyz_mesh_voxelized.npy
+        ├── xyz_smooth_mesh_voxelized.npy
+        ├── xyz_voxelized_config.json
+        ├── xyz_voxels_mask_raw.npy
+        ├── xyz_voxels_mask_smooth_config.json
+        ├── xyz_voxels_mask_smooth.npy
+        └── zxy_voxels_mask_raw.npy
