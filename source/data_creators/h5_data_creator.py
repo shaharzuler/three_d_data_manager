@@ -15,12 +15,13 @@ class H5DataCreator(DataCreatorBase):
         self.default_filename = "dataset" 
     
     def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:dict[str,str]=None) -> FilePaths:
-        # loading from source_path is not implemented for this class
+        if self.source_path != None:
+            raise NotImplementedError("Loading from source path is not supported in this class")
         super().add_sample(target_root_dir, dataset_attrs)
 
         filename = f"{self.creation_args.orig_name}_{self.default_filename}"
         self.dataset_path = os.path.join(self.subject_dir, filename + ".hdf5")
-        writing_mode = "w" if self.creation_args.override else "a" # override works differently here. it will perform and append if file exists. existing keys will be overwritten anyway.
+        writing_mode = "w" if self.creation_args.override else "a" # Override works differently here. It will perform and append if file exists. Existing keys will be overwritten anyway.
 
         mesh_path = getattr(file_paths, self.creation_args.orig_name)[self.sample_name]
         vertices, faces = mesh_utils.read_off(mesh_path)

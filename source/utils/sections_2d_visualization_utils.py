@@ -6,6 +6,8 @@ import numpy as np
 from PIL import Image
 import cv2
 
+from three_d_data_manager.source.file_paths import FilePaths
+
 
 @dataclass
 class colors:
@@ -16,7 +18,7 @@ class colors:
     GREEN_RGB: tuple  = 1,   255, 1
 
 
-def draw_2d_sections(arr:np.array, save_path:str, pad_val = 10):
+def draw_2d_sections(arr:np.array, save_path:str, pad_val = 10) -> np.array:
     arr = arr.astype(float)
     min_val, max_val = arr.min(), arr.max()
     arr_sections = np.array(arr.shape)//2
@@ -51,12 +53,12 @@ def draw_2d_mask_on_scan(sections_image:np.array, sections_mask:np.array, color:
 
     return img_w_mask
 
-def save_mask_and_image(image, mask, color, save_path):
+def save_mask_and_image(image:np.array, mask:np.array, color:tuple[int,int,int], save_path:str) -> np.array: 
     sections_mask = draw_2d_sections(mask, save_path=None)
     sections_image_w_mask = draw_2d_mask_on_scan(image, sections_mask, color, save_path) 
     return sections_image_w_mask
 
-def draw_masks_and_contours(sections_image:np.array, masks_data:list[dict[str, any((str, np.array, tuple))]], target_root_dir:str, file_paths, name:str):#:FilePaths) -> FilePaths:
+def draw_masks_and_contours(sections_image:np.array, masks_data:list[dict[str, any((str, np.array, tuple))]], target_root_dir:str, file_paths:FilePaths, name:str) -> FilePaths:
     contours_arr = cv2.cvtColor(sections_image, cv2.COLOR_GRAY2BGR)
     for n, mask_data in enumerate(masks_data):
         contours_arr, file_paths = draw_single_mask_and_contour(sections_image, contours_arr, n, mask_data, target_root_dir, file_paths, name)
@@ -76,7 +78,7 @@ def draw_single_mask_and_contour(sections_image:np.array, contours_arr:np.array,
 
     return contours_arr, file_paths
 
-def draw_mask_contours(contours_arr, n, mask_data, sections_mask):
+def draw_mask_contours(contours_arr:np.array, n:int, mask_data:dict, sections_mask:np.array) -> np.array: 
     contours, hierarchy = cv2.findContours(sections_mask.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     color_bgr = mask_data["color"][::-1]
     cv2.drawContours(contours_arr, contours, -1, color_bgr, 1)

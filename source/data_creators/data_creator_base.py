@@ -4,7 +4,7 @@ from three_d_data_manager.source.file_paths import FilePaths
 
 class DataCreatorBase:
     def __init__(self, source_path:str, sample_name:str, hirarchy_levels:int, override:bool=True, version_name:str="orig", creation_args=None) -> None:
-        self.source_path: str = source_path # use source_path!=None if you prefer providing the processed file yourself rather than using the library to process it.
+        self.source_path: str = source_path # Use source_path!=None if you prefer providing the processed file yourself rather than using the library to process it. This option is not checked thoroughly.
         self.sample_name: str = sample_name
         self.hirarchy_levels: int = hirarchy_levels
         self.version_name: str = version_name
