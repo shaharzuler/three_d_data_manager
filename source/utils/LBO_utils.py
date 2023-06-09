@@ -327,7 +327,7 @@ class LBOcalc(object):
         S["TRIV"] = face
         S["nv"] = pos.shape[0]
 
-        evals, evecs, evecs_trans, L, A = self.S_info(S, self.k, use_torch=self.use_torch)
+        evals, evecs, evecs_trans, L, A = self._S_info(S, self.k, use_torch=self.use_torch)
         sample.evals = evals
         sample.evecs = evecs
         sample.evecs_trans = evecs_trans
@@ -336,10 +336,10 @@ class LBOcalc(object):
         return sample
 
     def __call__(self, sample):
-        return self.LBO_mesh(sample) if not self.is_pc else self.LBO_pc(sample)
+        return self.LBO_mesh(sample) if not self.is_pc else NotImplementedError("Not implemented for point cloud")
 
     @staticmethod
-    def cotLaplacian(S):
+    def _cotLaplacian(S):
         T1 = S['TRIV'][:, 0]
         T2 = S['TRIV'][:, 1]
         T3 = S['TRIV'][:, 2]
@@ -361,13 +361,13 @@ class LBOcalc(object):
 
         I = np.concatenate((T1, T2, T3))
         J = np.concatenate((T2, T3, T1))
-        w = 0.5 * LBOcalc.cotangent(np.concatenate((Ang[:, 2], Ang[:, 0], Ang[:, 1]))).astype(float)
+        w = 0.5 * LBOcalc._cotangent(np.concatenate((Ang[:, 2], Ang[:, 0], Ang[:, 1]))).astype(float)
         In = np.concatenate((I, J, I, J))
         Jn = np.concatenate((J, I, I, J))
         wn = np.concatenate((-w, -w, w, w))
         W = csr_matrix((wn, (In, Jn)), [S['nv'], S['nv']])  # Sparse Cotangent Weight Matrix
 
-        cA = LBOcalc.cotangent(Ang) / 2  # Half cotangent of all angles
+        cA = LBOcalc._cotangent(Ang) / 2  # Half cotangent of all angles
         At = 1 / 4 * (L[:, [1, 2, 0]] ** 2 * cA[:, [1, 2, 0]] + L[:, [2, 0, 1]] ** 2 * cA[:, [2, 0, 1]]).astype(
             float)  # Voronoi Area
 
@@ -400,13 +400,13 @@ class LBOcalc(object):
         return W, A
 
     @staticmethod
-    def trim_tensor_values(tensor, vmin=-0.99,vmax=0.99):
+    def _trim_tensor_values(tensor, vmin=-0.99,vmax=0.99):
         tensor[np.where(tensor>vmax)]=vmax 
         tensor[np.where(tensor<vmin)]=vmin
         return tensor
 
     @staticmethod
-    def laplacian_torch(V, F,to_dense=False,to_numpy=False):
+    def _laplacian_torch(V, F,to_dense=False,to_numpy=False):
         if(isinstance(V, (np.ndarray))):
             V,F = torch.from_numpy(V.copy()),torch.from_numpy(F.copy()).long()
         nv = V.shape[0]
@@ -428,12 +428,12 @@ class LBOcalc(object):
         Cos2 = (L1**2+L3**2-L2**2)/(2*L1*L3)
         Cos3 = (L1**2+L2**2-L3**2)/(2*L1*L2)
         Cos = torch.stack([Cos1, Cos2, Cos3], dim=1)  # Cosines of opposite edges for each triangle
-        Cos = LBOcalc.trim_tensor_values(Cos, vmin=-0.99,vmax=0.99)
+        Cos = LBOcalc._trim_tensor_values(Cos, vmin=-0.99,vmax=0.99)
         Ang = torch.acos(Cos)  # Angles
 
         I = torch.cat([T1, T2, T3])
         J = torch.cat([T2, T3, T1])
-        w = 0.5 * LBOcalc.cotangent_torch(torch.cat([Ang[:, 2], Ang[:, 0], Ang[:, 1]]))
+        w = 0.5 * LBOcalc._cotangent_torch(torch.cat([Ang[:, 2], Ang[:, 0], Ang[:, 1]]))
         In = torch.cat([I, J, I, J])
         Jn = torch.cat([J, I, I, J])
         wn = torch.cat([-w, -w, w, w])
@@ -443,7 +443,7 @@ class LBOcalc(object):
         # Sparse Cotangent Weight Matrix
         A = torch.sparse.FloatTensor(torch.stack([In, Jn]), wn, [nv, nv])
 
-        cA = LBOcalc.cotangent_torch(Ang)/2  # Half cotangent of all angles
+        cA = LBOcalc._cotangent_torch(Ang)/2  # Half cotangent of all angles
         At = 1/4 * (L[:, [1, 2, 0]]** 2 * cA[:, [1, 2, 0]] +
                     L[:, [2, 0, 1]]** 2 * cA[:, [2, 0, 1]]) # Voronoi Area
 
@@ -481,22 +481,22 @@ class LBOcalc(object):
         return A, Area
 
     @staticmethod
-    def eigs_WA(W, A, numEig):
+    def _eigs_WA(W, A, numEig):
         eigvals, eigvecs = eigsh(W, numEig, A, 1e-6)
         return eigvals, eigvecs
 
     @staticmethod
-    def S_info(S, numEig,use_torch=False):
-        W, A = LBOcalc.cotLaplacian(S) if not use_torch else LBOcalc.laplacian_torch(S['VERTS'],S['TRIV'],to_numpy=True)
-        eigvals, eigvecs = LBOcalc.eigs_WA(W, A, numEig)
+    def _S_info(S, numEig,use_torch=False):
+        W, A = LBOcalc._cotLaplacian(S) if not use_torch else LBOcalc._laplacian_torch(S['VERTS'],S['TRIV'],to_numpy=True)
+        eigvals, eigvecs = LBOcalc._eigs_WA(W, A, numEig)
         eigvecs_trans = eigvecs.T * A
         return eigvals, eigvecs, eigvecs_trans, W,A
 
     @staticmethod
-    def cotangent(p):
+    def _cotangent(p):
         return np.cos(p)/np.sin(p)
 
     @staticmethod
-    def cotangent_torch(p):
+    def _cotangent_torch(p):
         return torch.cos(p)/torch.sin(p)
 

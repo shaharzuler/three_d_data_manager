@@ -25,7 +25,7 @@ def visualize_grid_of_lbo(verts ,faces:np.array ,eigenvectors:np.array ,dirpath:
     }
     max_lbos = max_lbos or 14
     
-    for eigvec_idx in tqdm(range(min(max_lbos, eigenvectors.shape[1]))):
+    for eigvec_idx in range(min(max_lbos, eigenvectors.shape[1])):
         save_path = os.path.join(dirpath, f'{prefix}_{eigvec_idx}')
         fig:go.Figure = MeshVisualizer().visualize_scalar_vector_on_shape( 
             MeshContainer(verts, faces),
@@ -61,28 +61,6 @@ def check_xvfb():
         return False
     else:
         return True
-
-# The following function is taken from https://github.com/omriefroni/dfaust_allign/visualization/mesh_utils.py
-def create_colormap(vert):
-    """
-    Creates a uniform color map on a mesh
-
-    Args:
-        VERT (Nx3 ndarray): The vertices of the object to plot
-
-    Returns:
-        Nx3: The RGB colors per point on the mesh
-    """
-    vert = np.double(vert)
-    minx = np.min(vert[:, 0])
-    miny = np.min(vert[:, 1])
-    minz = np.min(vert[:, 2])
-    maxx = np.max(vert[:, 0])
-    maxy = np.max(vert[:, 1])
-    maxz = np.max(vert[:, 2])
-    colors = np.stack([((vert[:, 0] - minx) / (maxx - minx)), ((vert[:, 1] - miny) /
-                                                               (maxy - miny)), ((vert[:, 2] - minz) / (maxz - minz))]).transpose()
-    return colors
 
 # The following class is based on code from https://github.com/omriefroni/dfaust_allign/visualization/mesh_visualizer.py
 class MeshVisualizer:
@@ -172,7 +150,6 @@ class MeshVisualizer:
                 hoverinfo="text",
                 text=[str(idx) for idx in range(6890)],
             )
-
 
     def visualize_scalar_vector_on_shape(
             self,
