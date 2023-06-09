@@ -3,9 +3,12 @@
 The **three_d_data_manager** is a Python library designed to manage and process 3D data samples. It offers various functionalities for creating and processing datasets from 3D scans in DICOM format and their corresponding 3D boolean segmentation arrays. The library provides tools to convert segmentation arrays to multiple formats. Below is a detailed guide on how to use the library with example code snippets.
 ## Installation
 
-To install the **three_d_data_manager**, use the following command:
+Build the **three_d_data_manager** package locally by running the following commands:
 ```b
-pip install three_d_data_manager
+# clone into this repo
+git clone https://github.com/shaharzuler/three_d_data_manager.git
+# install the 3D data manager package locally
+pip install -e ./three_d_data_manager
 ```
 
 ## usage
