@@ -13,14 +13,14 @@ from .src.data_creators.zxy_voxels_mask_data_creator import ZXYVoxelsMaskDataCre
 from .src.data_creators.two_d_vis_data_creator import TwoDVisDataCreator
 from .src.data_creators.three_d_vis_data_creator import ThreeDVisDataCreator
 
-from .src.process_args.h5_dataset_creation_args import H5DatasetCreationArgs
-from .src.process_args.mesh_smoothing_creation_args import MeshSmoothingCreationArgs
-from .src.process_args.smooth_mesh_creation_args import SmoothMeshCreationArgs
-from .src.process_args.voxel_smoothing_creation_args import VoxelSmoothingCreationArgs
-from .src.process_args.lbo_creation_args import LBOCreationArgs
-from .src.process_args.voxelizing_creation_args import VoxelizingCreationArgs
-from .src.process_args.two_d_vis_creation_args import TwoDVisualizationCreationArgs
-from .src.process_args.three_d_vis_creation_args import ThreeDVisualizationCreationArgs
+from .src.creation_args.h5_dataset_creation_args import H5DatasetCreationArgs
+from .src.creation_args.mesh_smoothing_creation_args import MeshSmoothingCreationArgs
+from .src.creation_args.smooth_mesh_creation_args import SmoothMeshCreationArgs
+from .src.creation_args.voxel_smoothing_creation_args import VoxelSmoothingCreationArgs
+from .src.creation_args.lbo_creation_args import LBOCreationArgs
+from .src.creation_args.voxelizing_creation_args import VoxelizingCreationArgs
+from .src.creation_args.two_d_vis_creation_args import TwoDVisualizationCreationArgs
+from .src.creation_args.three_d_vis_creation_args import ThreeDVisualizationCreationArgs
 
 from .src.dataset import Dataset
 
