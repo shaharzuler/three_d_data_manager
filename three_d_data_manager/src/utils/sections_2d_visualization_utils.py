@@ -6,7 +6,7 @@ import numpy as np
 from PIL import Image
 import cv2
 
-from three_d_data_manager.source.file_paths import FilePaths
+from three_d_data_manager.src.file_paths import FilePaths
 
 
 @dataclass

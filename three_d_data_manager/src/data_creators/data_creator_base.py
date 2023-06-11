@@ -1,6 +1,6 @@
 import os
 
-from three_d_data_manager.source.file_paths import FilePaths
+from three_d_data_manager.src.file_paths import FilePaths
 
 class DataCreatorBase:
     def __init__(self, source_path:str, sample_name:str, hirarchy_levels:int, override:bool=True, version_name:str="orig", creation_args=None) -> None:

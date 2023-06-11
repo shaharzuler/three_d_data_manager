@@ -3,8 +3,8 @@ from dataclasses import asdict
 import numpy as np
 
 from .three_d_arr_data_creator_base import ThreeDArrDataCreatorBase
-from three_d_data_manager.source.file_paths import FilePaths
-from three_d_data_manager.source.utils import voxels_mesh_conversions_utils, os_utils
+from three_d_data_manager.src.file_paths import FilePaths
+from three_d_data_manager.src.utils import voxels_mesh_conversions_utils, os_utils
 
 
 class VoxelizedMeshDataCreator(ThreeDArrDataCreatorBase):

@@ -3,7 +3,7 @@ import os
 import numpy as np
 
 from .data_creator_base import DataCreatorBase
-from three_d_data_manager.source.file_paths import FilePaths
+from three_d_data_manager.src.file_paths import FilePaths
 
 
 class ThreeDArrDataCreatorBase(DataCreatorBase):

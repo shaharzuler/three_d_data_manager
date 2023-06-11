@@ -6,7 +6,7 @@ from plyfile import PlyData, PlyElement
 import trimesh
 import scipy.io as sio
 
-from three_d_data_manager.source.utils.LBO_utils import fem_laplacian
+from three_d_data_manager.src.utils.LBO_utils import fem_laplacian
 
 
 # The following function is taken from github.com/pvnieo/GeomFmaps_pytorch/utils.py

@@ -4,7 +4,7 @@ import os
 import numpy as np
 
 from .data_creator_base import DataCreatorBase 
-from three_d_data_manager.source.utils import mesh_utils
+from three_d_data_manager.src.utils import mesh_utils
 
 
 
