@@ -31,5 +31,9 @@ def voxel_smoothing(masks_arr:np.array, opening_footprint_radius:int, closing_to
     smooth_masks_arr = morphology.opening(closed_masks_arr, footprint)  
     return smooth_masks_arr
 
-
+def extract_segmentation_envelope(seg_arr:np.array) -> np.array:
+    transitions_x_y_z = np.gradient(seg_arr.astype(int),0.5)
+    envelope_thick = np.abs(np.logical_or(*transitions_x_y_z))
+    envelope_ints = envelope_thick * seg_arr
+    return envelope_ints.astype(bool) 
 
