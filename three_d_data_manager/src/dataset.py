@@ -4,6 +4,7 @@ import json
 from dataclasses import asdict
 
 import numpy as np
+import open3d as o3d
 
 from .file_paths import FilePaths
 from .data_creators.data_creator_base import DataCreatorBase
@@ -64,6 +65,18 @@ class Dataset:
     def get_convex_mesh(self, name:str) -> np.array:
         mesh_convex = mesh_utils.read_off(self.file_paths.mesh_convex[name])    
         return mesh_convex
+
+    def get_point_cloud(self, name:str) -> np.array:
+        point_cloud = np.asarray(o3d.io.read_point_cloud(self.file_paths.point_cloud_from_mesh[name]).points)
+        return point_cloud    
+
+    def get_smooth_point_cloud(self, name:str) -> np.array:
+        point_cloud = np.asarray(o3d.io.read_point_cloud(self.file_paths.point_cloud_from_mesh_smooth[name]).points)
+        return point_cloud  
+
+    def get_convex_point_cloud(self, name:str) -> np.array:
+        point_cloud = np.asarray(o3d.io.read_point_cloud(self.file_paths.point_cloud_from_mesh_convex[name]).points)
+        return point_cloud 
     
     def get_mesh_lbo_data(self, name:str) -> tuple[np.array, np.array, np.array]:
         lbo_data = np.load(self.file_paths.mesh_lbo_data[name])    

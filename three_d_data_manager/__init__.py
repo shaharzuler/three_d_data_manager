@@ -4,6 +4,7 @@ from .src.data_creators.dicom_data_creator import DicomDataCreator
 from .src.data_creators.h5_data_creator import H5DataCreator
 from .src.data_creators.lbos_data_creator import LBOsDataCreator
 from .src.data_creators.mesh_data_creator import MeshDataCreator
+from .src.data_creators.point_cloud_data_creator import PointCloudDataCreator
 from .src.data_creators.smooth_lbo_mesh_data_creator import SmoothLBOMeshDataCreator
 from .src.data_creators.voxelized_mesh_data_creator import VoxelizedMeshDataCreator
 from .src.data_creators.xyz_arr_data_creator import XYZArrDataCreator
@@ -15,6 +16,7 @@ from .src.data_creators.three_d_vis_data_creator import ThreeDVisDataCreator
 
 from .src.creation_args.h5_dataset_creation_args import H5DatasetCreationArgs
 from .src.creation_args.mesh_smoothing_creation_args import MeshSmoothingCreationArgs
+from .src.creation_args.point_cloud_creation_args import PointCloudCreationArgs
 from .src.creation_args.smooth_mesh_creation_args import SmoothMeshCreationArgs
 from .src.creation_args.voxel_smoothing_creation_args import VoxelSmoothingCreationArgs
 from .src.creation_args.lbo_creation_args import LBOCreationArgs

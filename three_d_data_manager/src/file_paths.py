@@ -16,17 +16,27 @@ class FilePaths:
     mesh: dict[str, str] = None
     mesh_lbo_data: dict[str, str] = None
     mesh_dataset: dict[str, str] = None
+    point_cloud_from_mesh: dict[str, str] = None
+    point_cloud_from_mesh_lbo_data: dict[str, str] = None
+    point_cloud_from_mesh_dataset: dict[str, str] = None
     xyz_mesh_voxelized: dict[str, str] = None
 
     mesh_smooth: dict[str, str] = None
     mesh_smooth_lbo_data: dict[str, str] = None
     mesh_smooth_dataset: dict[str, str] = None
+    point_cloud_from_mesh_smooth: dict[str, str] = None
+    point_cloud_from_mesh_smooth_lbo_data: dict[str, str] = None
+    point_cloud_from_mesh_smooth_dataset: dict[str, str] = None
     xyz_smooth_mesh_voxelized: dict[str, str] = None
 
     mesh_convex: dict[str, str] = None
     mesh_convex_lbo_data: dict[str, str] = None
     mesh_convex_dataset: dict[str, str] = None
+    point_cloud_from_mesh_convex: dict[str, str] = None
+    point_cloud_from_mesh_convex_lbo_data: dict[str, str] = None
+    point_cloud_from_mesh_convex_dataset: dict[str, str] = None
     xyz_convex_mesh_voxelized: dict[str, str] = None
+
 
     scan_sections: dict[str, str] = None
     section_contours: dict[str, str] = None

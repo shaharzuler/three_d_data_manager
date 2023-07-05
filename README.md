@@ -113,14 +113,40 @@ An off file of the mesh will be saved to: <br>
 `target/path/to/dataset/18/orig/meshes/mesh.off` <br>
 A configuration file documenting the mesh creation arguments will be saved to:<br>
 `target/path/to/dataset/18/orig/meshes/mesh_config.json` <br>
+
+### Create a point cloud from mesh
+
+To create a point cloud from the mesh, use the ```PointCloudDataCreator``` class. You can also specify point cloud creation arguments using the ```PointCloudCreationArgs``` class:
+```python
+point_cloud_creation_args = PointCloudCreationArgs(
+    num_points=1E3, 
+    mesh_path=dataset.file_paths.mesh[sample_name], 
+    orig_mesh_name="mesh"
+    ) 
+
+point_cloud_data_creator = PointCloudDataCreator(
+    source_path=None, 
+    sample_name=sample_name,
+    hirarchy_levels=2, 
+    creation_args=point_cloud_creation_args
+)
+
+dataset.add_sample(point_cloud_creation_args) 
+```
+A ply file of the point cloud will be saved to: <br>
+`target/path/to/dataset/18/orig/point_clouds/point_cloud_from_mesh.off` <br>
+A configuration file documenting the point cloud creation arguments will be saved to:<br>
+`target/path/to/dataset/18/orig/point_clouds/point_cloud_from_mesh_config.json` <br>
+
 ### Calculate and store Laplacian Beltrami Operators (LBOs)
+
 To calculate and store LBOs of the mesh file, use the ```LBOsDataCreator``` class. Specify the LBO creation arguments with an instance of ```LBOCreationArgs```:
 ```python
 lbo_creation_args = LBOCreationArgs(
     num_LBOs=300, 
     is_point_cloud=False, 
-    mesh_path=dataset.file_paths.mesh[sample_name], 
-    orig_mesh_name="mesh", 
+    geometry_path=dataset.file_paths.mesh[sample_name], 
+    orig_geometry_name="mesh", 
     use_torch=True
 )
 
@@ -143,6 +169,7 @@ To create an H5 format dataset, use the ```H5DataCreator``` class. Specify the d
 ```python
 h5_dataset_creation_args = H5DatasetCreationArgs(
     orig_name="mesh", 
+    is_point_cloud=False,
     override=True
 )
 
@@ -200,8 +227,8 @@ The voxelized version of the mesh, in the dimension of the original voxel mask, 
 smooth_lbo_creation_args = LBOCreationArgs(
     num_LBOs=300, 
     is_point_cloud=False, 
-    mesh_path=dataset.file_paths.mesh_smooth[sample_name], 
-    orig_mesh_name="mesh_smooth", 
+    geometry_path=dataset.file_paths.mesh_smooth[sample_name], 
+    orig_geometry_name="mesh_smooth", 
     use_torch=True
 )
 
@@ -349,20 +376,40 @@ The final result for timestep 18 will be as follows:
     │   ├── mesh_dataset_config.json
     │   ├── mesh_dataset.hdf5
     │   ├── mesh_smooth_dataset_config.json
-    │   └── mesh_smooth_dataset.hdf5
+    │   ├── mesh_smooth_dataset.hdf5
+    │   ├── point_cloud_from_mesh_convex_dataset_config.json
+    │   ├── point_cloud_from_mesh_convex_dataset.hdf5
+    │   ├── point_cloud_from_mesh_dataset_config.json
+    │   ├── point_cloud_from_mesh_dataset.hdf5
+    │   ├── point_cloud_from_mesh_smooth_dataset_config.json
+    │   └── point_cloud_from_mesh_smooth_dataset.hdf5
     ├── lbos
     │   ├── mesh_convex_lbo_data_config.json
     │   ├── mesh_convex_lbo_data.npz
     │   ├── mesh_lbo_data_config.json
     │   ├── mesh_lbo_data.npz
     │   ├── mesh_smooth_lbo_data_config.json
-    │   └── mesh_smooth_lbo_data.npz
+    │   ├── mesh_smooth_lbo_data.npz
+    │   ├── point_cloud_from_mesh_convex_lbo_data_config.json
+    │   ├── point_cloud_from_mesh_convex_lbo_data.npz
+    │   ├── point_cloud_from_mesh_lbo_data_config.json
+    │   ├── point_cloud_from_mesh_lbo_data.npz
+    │   ├── point_cloud_from_mesh_smooth_lbo_data_config.json
+    │   └── point_cloud_from_mesh_smooth_lbo_data.npz
     ├── meshes
     │   ├── convex_mesh.off
     │   ├── mesh_config.json
     │   ├── mesh.off
     │   ├── smooth_mesh_config.json
     │   └── smooth_mesh.off
+    ├── point_clouds
+    │   ├── point_cloud_config.json
+    │   ├── point_cloud_from_mesh_config.json
+    │   ├── point_cloud_from_mesh_convex_config.json
+    │   ├── point_cloud_from_mesh_convex.ply
+    │   ├── point_cloud_from_mesh.ply
+    │   ├── point_cloud_from_mesh_smooth_config.json
+    │   └── point_cloud_from_mesh_smooth.ply
     └── voxels
         ├── xyz_arr_raw.npy
         ├── xyz_convex_mesh_voxelized.npy

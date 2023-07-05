@@ -1,6 +1,6 @@
 from three_d_data_manager import Dataset
-from three_d_data_manager import ConvexMeshDataCreator, DicomDataCreator, H5DataCreator, LBOsDataCreator, MeshDataCreator, SmoothLBOMeshDataCreator, VoxelizedMeshDataCreator, XYZArrDataCreator, XYZVoxelsMaskDataCreator, SmoothVoxelsMaskDataCreator, ZXYVoxelsMaskDataCreator, TwoDVisDataCreator, ThreeDVisDataCreator
-from three_d_data_manager import H5DatasetCreationArgs, MeshSmoothingCreationArgs, SmoothMeshCreationArgs, VoxelSmoothingCreationArgs, LBOCreationArgs, VoxelizingCreationArgs, TwoDVisualizationCreationArgs, ThreeDVisualizationCreationArgs
+from three_d_data_manager import ConvexMeshDataCreator, DicomDataCreator, H5DataCreator, LBOsDataCreator, MeshDataCreator, SmoothLBOMeshDataCreator, VoxelizedMeshDataCreator, XYZArrDataCreator, XYZVoxelsMaskDataCreator, SmoothVoxelsMaskDataCreator, ZXYVoxelsMaskDataCreator, PointCloudDataCreator, TwoDVisDataCreator, ThreeDVisDataCreator
+from three_d_data_manager import H5DatasetCreationArgs, MeshSmoothingCreationArgs, SmoothMeshCreationArgs, VoxelSmoothingCreationArgs, LBOCreationArgs, VoxelizingCreationArgs, TwoDVisualizationCreationArgs, ThreeDVisualizationCreationArgs, PointCloudCreationArgs
 
 
 
@@ -47,6 +47,21 @@ for sample_name, zxy_voxels_mask_arr_path in zip(timesteps, zxy_voxels_mask_arr_
     lbos_data_creator = LBOsDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=lbo_creation_args)
     dataset.add_sample(lbos_data_creator)
 
+    # create point cloud from mesh
+    point_cloud_creation_args = PointCloudCreationArgs(num_points=1E3, mesh_path=dataset.file_paths.mesh[sample_name], orig_mesh_name="mesh") 
+    point_cloud_data_creator = PointCloudDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=point_cloud_creation_args)
+    dataset.add_sample(point_cloud_data_creator)
+
+    # create lbos from point cloud
+    pcd_lbo_creation_args = LBOCreationArgs(num_LBOs=300, is_point_cloud=True, geometry_path=dataset.file_paths.point_cloud_from_mesh[sample_name], orig_geometry_name="point_cloud_from_mesh", use_torch=True)
+    pcd_lbos_data_creator = LBOsDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=pcd_lbo_creation_args)
+    dataset.add_sample(pcd_lbos_data_creator)
+
+    #create point cloud h5 dataset
+    pcd_h5_dataset_creation_args = H5DatasetCreationArgs(orig_name="point_cloud_from_mesh", is_point_cloud=True, override=True)
+    pcd_h5_dataset_data_creator = H5DataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=pcd_h5_dataset_creation_args)
+    dataset.add_sample(pcd_h5_dataset_data_creator)
+
     #create mesh h5 dataset
     h5_dataset_creation_args = H5DatasetCreationArgs(orig_name="mesh", override=True)
     h5_dataset_data_creator = H5DataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=h5_dataset_creation_args)
@@ -67,6 +82,21 @@ for sample_name, zxy_voxels_mask_arr_path in zip(timesteps, zxy_voxels_mask_arr_
     smooth_lbos_data_creator = LBOsDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=smooth_lbo_creation_args)
     dataset.add_sample(smooth_lbos_data_creator)
 
+    # create point cloud from smooth mesh
+    smooth_pcd_point_cloud_creation_args = PointCloudCreationArgs(num_points=1E3, mesh_path=dataset.file_paths.mesh[sample_name], orig_mesh_name="mesh_smooth") 
+    smooth_pcd_point_cloud_data_creator = PointCloudDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=smooth_pcd_point_cloud_creation_args)
+    dataset.add_sample(smooth_pcd_point_cloud_data_creator)
+
+    # create lbos from point cloud
+    smooth_pcd_lbo_creation_args = LBOCreationArgs(num_LBOs=300, is_point_cloud=True, geometry_path=dataset.file_paths.point_cloud_from_mesh[sample_name], orig_geometry_name="point_cloud_from_mesh_smooth", use_torch=True)
+    smooth_pcd_lbos_data_creator = LBOsDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=smooth_pcd_lbo_creation_args)
+    dataset.add_sample(smooth_pcd_lbos_data_creator)
+
+    #create point cloud h5 dataset
+    smooth_pcd_h5_dataset_creation_args = H5DatasetCreationArgs(orig_name="point_cloud_from_mesh_smooth", is_point_cloud=True, override=True)
+    smooth_pcd_h5_dataset_data_creator = H5DataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=smooth_pcd_h5_dataset_creation_args)
+    dataset.add_sample(smooth_pcd_h5_dataset_data_creator)
+
     # create smooth mesh h5 dataset
     smooth_h5_dataset_creation_args = H5DatasetCreationArgs(orig_name="mesh_smooth", override=True)
     smooth_h5_dataset_data_creator = H5DataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=smooth_h5_dataset_creation_args)
@@ -83,6 +113,21 @@ for sample_name, zxy_voxels_mask_arr_path in zip(timesteps, zxy_voxels_mask_arr_
     convex_lbo_creation_args = LBOCreationArgs(num_LBOs=300, is_point_cloud=False, mesh_path=dataset.file_paths.mesh_convex[sample_name], orig_mesh_name="mesh_convex", use_torch=True)
     convex_lbos_data_creator = LBOsDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=convex_lbo_creation_args)
     dataset.add_sample(convex_lbos_data_creator)
+
+    # create point cloud from convex mesh
+    convex_point_cloud_creation_args = PointCloudCreationArgs(num_points=1E3, mesh_path=dataset.file_paths.mesh[sample_name], orig_mesh_name="mesh_convex") 
+    convex_point_cloud_data_creator = PointCloudDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=convex_point_cloud_creation_args)
+    dataset.add_sample(convex_point_cloud_data_creator)
+
+    # create lbos from point cloud
+    convex_pcd_lbo_creation_args = LBOCreationArgs(num_LBOs=300, is_point_cloud=True, geometry_path=dataset.file_paths.point_cloud_from_mesh[sample_name], orig_geometry_name="point_cloud_from_mesh_convex", use_torch=True)
+    convex_pcd_lbos_data_creator = LBOsDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=convex_pcd_lbo_creation_args)
+    dataset.add_sample(convex_pcd_lbos_data_creator)
+
+    #create point cloud h5 dataset
+    convex_pcd_h5_dataset_creation_args = H5DatasetCreationArgs(orig_name="point_cloud_from_mesh_convex", is_point_cloud=True, override=True)
+    convex_pcd_h5_dataset_data_creator = H5DataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=convex_pcd_h5_dataset_creation_args)
+    dataset.add_sample(convex_pcd_h5_dataset_data_creator)
 
     #create convex mesh h5 dataset
     convex_h5_dataset_creation_args = H5DatasetCreationArgs(orig_name="mesh_convex", override=True)
@@ -102,6 +147,9 @@ for sample_name, zxy_voxels_mask_arr_path in zip(timesteps, zxy_voxels_mask_arr_
     convex_verts, convex_faces =  dataset.get_convex_mesh(sample_name)
     voxelized_smooth_mesh = dataset.get_voxelized_smooth_mesh(sample_name)
     voxelized_convex_mesh = dataset.get_voxelized_convex_mesh(sample_name)
+    point_cloud = dataset.get_point_cloud(sample_name)
+    smooth_point_cloud = dataset.get_smooth_point_cloud(sample_name)
+    convex_point_cloud = dataset.get_convex_point_cloud(sample_name)
 
     # create single sample level visualizations
     two_d_visualization_args = TwoDVisualizationCreationArgs()

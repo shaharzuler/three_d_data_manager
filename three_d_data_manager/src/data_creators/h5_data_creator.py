@@ -1,7 +1,10 @@
 from dataclasses import asdict
+import os
+
 import numpy as np
 import h5py
-import os
+import open3d as o3d
+
 
 from .data_creator_base import DataCreatorBase
 from three_d_data_manager.src.file_paths import FilePaths
@@ -23,13 +26,19 @@ class H5DataCreator(DataCreatorBase):
         self.dataset_path = os.path.join(self.subject_dir, filename + ".hdf5")
         writing_mode = "w" if self.creation_args.override else "a" # Override works differently here. It will perform and append if file exists. Existing keys will be overwritten anyway.
 
-        mesh_path = getattr(file_paths, self.creation_args.orig_name)[self.sample_name]
-        vertices, faces = mesh_utils.read_off(mesh_path)
+        geometry_path = getattr(file_paths, self.creation_args.orig_name)[self.sample_name]
         lbo_data_path = getattr(file_paths, self.creation_args.orig_name+"_lbo_data")[self.sample_name]
         lbo_data = np.load(lbo_data_path)
-
+        if self.creation_args.is_point_cloud:
+            points = np.asarray(o3d.io.read_point_cloud(geometry_path).points)
+            vertices, faces = lbo_data["vertices"], lbo_data["faces"]
+        else:
+            points = np.array([])
+            vertices, faces = mesh_utils.read_off(geometry_path)
+        
         out_h5 = h5py.File(self.dataset_path, writing_mode)
         
+        out_h5.create_dataset(self.sample_name + '_points'      , data=points                  , compression="gzip")
         out_h5.create_dataset(self.sample_name + '_vertices'    , data=vertices                , compression="gzip")
         out_h5.create_dataset(self.sample_name + "_faces"       , data=faces                   , compression="gzip") 
         out_h5.create_dataset(self.sample_name + "_area_weights", data=lbo_data["area_weights"], compression="gzip") 

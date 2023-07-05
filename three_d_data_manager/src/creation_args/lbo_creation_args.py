@@ -4,6 +4,6 @@ from dataclasses import dataclass
 class LBOCreationArgs:
     num_LBOs: int
     is_point_cloud: bool
-    mesh_path: str
-    orig_mesh_name: str
+    geometry_path: str
+    orig_geometry_name: str
     use_torch: bool = True # use_torch=False function is buggy
