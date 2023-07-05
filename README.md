@@ -321,6 +321,9 @@ lbo_eigenvectors, lbo_eigenvalues, lbo_area_weights = dataset.get_mesh_lbo_data(
 convex_verts, convex_faces =  dataset.get_convex_mesh(sample_name)
 voxelized_smooth_mesh = dataset.get_voxelized_smooth_mesh(sample_name)
 voxelized_convex_mesh = dataset.get_voxelized_convex_mesh(sample_name)
+point_cloud = dataset.get_point_cloud(sample_name)
+smooth_point_cloud = dataset.get_smooth_point_cloud(sample_name)
+convex_point_cloud = dataset.get_convex_point_cloud(sample_name)
 ```
 
 ## Conclusion
