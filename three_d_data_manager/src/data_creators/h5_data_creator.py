@@ -43,7 +43,7 @@ class H5DataCreator(DataCreatorBase):
         out_h5.create_dataset(self.sample_name + "_faces"       , data=faces                   , compression="gzip") 
         out_h5.create_dataset(self.sample_name + "_area_weights", data=lbo_data["area_weights"], compression="gzip") 
         out_h5.create_dataset(self.sample_name + "_eigenvectors", data=lbo_data["eigenvectors"], compression="gzip") 
-        out_h5.create_dataset(self.sample_name + "_eigenvalus"  , data=lbo_data["eigenvalues"] , compression="gzip")
+        out_h5.create_dataset(self.sample_name + "_eigenvalues"  , data=lbo_data["eigenvalues"] , compression="gzip")
 
         out_h5.close()
 
