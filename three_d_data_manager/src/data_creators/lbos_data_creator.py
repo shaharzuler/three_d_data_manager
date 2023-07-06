@@ -27,7 +27,7 @@ class LBOsDataCreator(DataCreatorBase):
             if self.creation_args.is_point_cloud:
                 point_cloud =  o3d.io.read_point_cloud(self.creation_args.geometry_path)
                 mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(point_cloud, depth=8, width=0, scale=1.1, linear_fit=True)[0]
-                mesh = mesh.simplify_quadric_decimation(len(point_cloud.points))
+                mesh = mesh.simplify_quadric_decimation(2*len(point_cloud.points))
                 vertices, faces = np.asarray(mesh.vertices), np.asarray(mesh.triangles)
             else:
                 vertices, faces = mesh_utils.read_off(self.creation_args.geometry_path)
