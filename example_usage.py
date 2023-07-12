@@ -43,7 +43,7 @@ for sample_name, zxy_voxels_mask_arr_path in zip(timesteps, zxy_voxels_mask_arr_
     dataset.add_sample(voxelized_mesh_data_creator)
 
     # create lbos from mesh
-    lbo_creation_args = LBOCreationArgs(num_LBOs=300, is_point_cloud=False, mesh_path=dataset.file_paths.mesh[sample_name], orig_mesh_name="mesh", use_torch=True)
+    lbo_creation_args = LBOCreationArgs(num_LBOs=300, is_point_cloud=False, geometry_path=dataset.file_paths.mesh[sample_name], orig_geometry_name="mesh", use_torch=True)
     lbos_data_creator = LBOsDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=lbo_creation_args)
     dataset.add_sample(lbos_data_creator)
 
@@ -78,7 +78,7 @@ for sample_name, zxy_voxels_mask_arr_path in zip(timesteps, zxy_voxels_mask_arr_
     dataset.add_sample(voxelized_smooth_mesh_data_creator)
 
     # create lbos from smooth mesh
-    smooth_lbo_creation_args = LBOCreationArgs(num_LBOs=300, is_point_cloud=False, mesh_path=dataset.file_paths.mesh_smooth[sample_name], orig_mesh_name="mesh_smooth", use_torch=True)
+    smooth_lbo_creation_args = LBOCreationArgs(num_LBOs=300, is_point_cloud=False, geometry_path=dataset.file_paths.mesh_smooth[sample_name], orig_geometry_name="mesh_smooth", use_torch=True)
     smooth_lbos_data_creator = LBOsDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=smooth_lbo_creation_args)
     dataset.add_sample(smooth_lbos_data_creator)
 
@@ -110,7 +110,7 @@ for sample_name, zxy_voxels_mask_arr_path in zip(timesteps, zxy_voxels_mask_arr_
     dataset.add_sample(voxelized_convex_mesh_data_creator)
 
     # create lbos from convex mesh
-    convex_lbo_creation_args = LBOCreationArgs(num_LBOs=300, is_point_cloud=False, mesh_path=dataset.file_paths.mesh_convex[sample_name], orig_mesh_name="mesh_convex", use_torch=True)
+    convex_lbo_creation_args = LBOCreationArgs(num_LBOs=300, is_point_cloud=False, geometry_path=dataset.file_paths.mesh_convex[sample_name], orig_geometry_name="mesh_convex", use_torch=True)
     convex_lbos_data_creator = LBOsDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=convex_lbo_creation_args)
     dataset.add_sample(convex_lbos_data_creator)
 
