@@ -25,7 +25,8 @@ class XYZArrDataCreator(ThreeDArrDataCreatorBase):
             if self.source_path is None:
                 output_arr = self.get_xyz_arr_from_dicom(file_paths.dicom_dir[self.sample_name])
             else:
-                output_arr = np.load(self.source_path) # doesn't take care of scaling and orientation.
+                self.xyz_arr = np.load(self.source_path)
+                output_arr = self.xyz_arr # doesn't take care of scaling and orientation.
             self.save_arr_default_filename(output_arr)
             if self.creation_args is not None:
                 os_utils.write_config_file(self.subject_dir, self.default_filename, asdict(self.creation_args))
