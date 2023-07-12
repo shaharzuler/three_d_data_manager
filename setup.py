@@ -7,7 +7,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='three_d_data_manager',
-    version='0.1.1',
+    version='0.1.2',
     packages=find_packages(),
     install_requires=requirements,
     author='Shahar Zuler',
