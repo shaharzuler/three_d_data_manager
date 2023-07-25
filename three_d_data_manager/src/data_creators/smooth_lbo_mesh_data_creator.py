@@ -32,7 +32,7 @@ class SmoothLBOMeshDataCreator(MeshDataCreatorBase):
         return file_paths
 
    
-    def _smooth_with_lbo(self, verts:np.array, faces:np.array):
+    def _smooth_with_lbo(self, verts:np.ndarray, faces:np.ndarray):
         lbo_data = np.load(self.creation_args.lbos_path)
         # Reduce dim in the LBO space (verts * eigenvects * (eigenvects^-1)) :
         projected = np.dot(verts.transpose(), lbo_data["eigenvectors"])

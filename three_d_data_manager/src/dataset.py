@@ -2,6 +2,7 @@
 import os
 import json
 from dataclasses import asdict
+from typing import Tuple
 
 import numpy as np
 import open3d as o3d
@@ -78,17 +79,17 @@ class Dataset:
         point_cloud = np.asarray(o3d.io.read_point_cloud(self.file_paths.point_cloud_from_mesh_convex[name]).points)
         return point_cloud 
     
-    def get_mesh_lbo_data(self, name:str) -> tuple[np.array, np.array, np.array]:
+    def get_mesh_lbo_data(self, name:str) -> Tuple[np.array, np.array, np.array]:
         lbo_data = np.load(self.file_paths.mesh_lbo_data[name])    
         eigenvectors, eigenvalues, area_weights = lbo_data["eigenvectors"], lbo_data["eigenvalues"], lbo_data["area_weights"], 
         return eigenvectors, eigenvalues, area_weights
 
-    def get_smooth_lbo_data(self, name:str) -> tuple[np.array, np.array, np.array]:
+    def get_smooth_lbo_data(self, name:str) -> Tuple[np.array, np.array, np.array]:
         lbo_data = np.load(self.file_paths.smooth_mesh_lbo_data[name])    
         eigenvectors, eigenvalues, area_weights = lbo_data["eigenvectors"], lbo_data["eigenvalues"], lbo_data["area_weights"], 
         return eigenvectors, eigenvalues, area_weights
 
-    def get_convex_lbo_data(self, name:str) -> tuple[np.array, np.array, np.array]:
+    def get_convex_lbo_data(self, name:str) -> Tuple[np.array, np.array, np.array]:
         lbo_data = np.load(self.file_paths.convex_mesh_lbo_data[name])    
         eigenvectors, eigenvalues, area_weights = lbo_data["eigenvectors"], lbo_data["eigenvalues"], lbo_data["area_weights"], 
         return eigenvectors, eigenvalues, area_weights

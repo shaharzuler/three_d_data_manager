@@ -5,7 +5,7 @@ from skimage import measure
 import pyvista as pv
 import trimesh
 
-def voxels_mask_to_mesh(voxels_mask:np.array, marching_cubes_step_size:int):
+def voxels_mask_to_mesh(voxels_mask:np.ndarray, marching_cubes_step_size:int):
     verts, faces, normals, values = measure.marching_cubes(
         voxels_mask,
         gradient_direction="descent",

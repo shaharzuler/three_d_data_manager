@@ -18,9 +18,9 @@ class ThreeDArrDataCreatorBase(DataCreatorBase):
         self.arr_path = filename + ".npy"
         return os.path.isfile(self.arr_path)
 
-    def save_arr_default_filename(self, arr:np.array) -> None:
+    def save_arr_default_filename(self, arr:np.ndarray) -> None:
         np.save(self.arr_path, arr) 
 
-    def save_arr(self, arr:np.array, filename:str) -> None:
+    def save_arr(self, arr:np.ndarray, filename:str) -> None:
         self.arr_path = os.path.join(self.subject_dir, filename + ".npy")
         np.save(self.arr_path, arr)

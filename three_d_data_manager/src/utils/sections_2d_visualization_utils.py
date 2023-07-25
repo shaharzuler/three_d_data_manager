@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import os
-from typing import Dict, List
+from typing import Dict, List, Tuple, Union
 
 from PIL import Image
 import numpy as np
@@ -19,7 +19,7 @@ class colors:
     GREEN_RGB: tuple  = 1,   255, 1
 
 
-def draw_2d_sections(arr:np.array, save_path:str, pad_val = 10) -> np.array:
+def draw_2d_sections(arr:np.ndarray, save_path:str, pad_val = 10) -> np.array:
     arr = arr.astype(float)
     min_val, max_val = arr.min(), arr.max()
     arr_sections = np.array(arr.shape)//2
@@ -37,7 +37,7 @@ def draw_2d_sections(arr:np.array, save_path:str, pad_val = 10) -> np.array:
 
     return sections_image
 
-def draw_2d_mask_on_scan(sections_image:np.array, sections_mask:np.array, color:tuple, save_path:str) -> np.array: 
+def draw_2d_mask_on_scan(sections_image:np.ndarray, sections_mask:np.ndarray, color:tuple, save_path:str) -> np.array: 
     if len(sections_image.shape) == 2:
         img_rgb = cv2.cvtColor(sections_image, cv2.COLOR_GRAY2RGB) # H x W x 3
     sections_mask = sections_mask.astype(float)/255
@@ -54,7 +54,7 @@ def draw_2d_mask_on_scan(sections_image:np.array, sections_mask:np.array, color:
 
     return img_w_mask
 
-def draw_masks_and_contours(sections_image:np.array, masks_data:List[Dict[str, any((str, np.array, tuple))]], target_root_dir:str, file_paths:FilePaths, name:str) -> FilePaths:
+def draw_masks_and_contours(sections_image:np.ndarray, masks_data:List[Dict[str, Union[str, np.ndarray, Tuple]]], target_root_dir:str, file_paths:FilePaths, name:str) -> FilePaths:
     contours_arr = cv2.cvtColor(sections_image, cv2.COLOR_GRAY2BGR)
     for n, mask_data in enumerate(masks_data):
         contours_arr, file_paths = _draw_single_mask_and_contour(sections_image, contours_arr, n, mask_data, target_root_dir, file_paths, name)
@@ -65,7 +65,7 @@ def draw_masks_and_contours(sections_image:np.array, masks_data:List[Dict[str, a
     
     return file_paths
 
-def _draw_single_mask_and_contour(sections_image:np.array, contours_arr:np.array, n:int, mask_data:List[Dict[str, any((str, np.array, tuple))]], target_root_dir:str, file_paths, name:str):
+def _draw_single_mask_and_contour(sections_image:np.ndarray, contours_arr:np.ndarray, n:int, mask_data:List[Dict[str, Union[str, np.ndarray, Tuple]]], target_root_dir:str, file_paths, name:str):
     mask_sections_path = os.path.join(target_root_dir, f"n{n}_{mask_data['name']}.jpg")
     file_paths.add_path(f"n{n}_{mask_data['name']}", name, mask_sections_path)
 
@@ -74,14 +74,14 @@ def _draw_single_mask_and_contour(sections_image:np.array, contours_arr:np.array
 
     return contours_arr, file_paths
 
-def _draw_mask_contours(contours_arr:np.array, n:int, mask_data:dict, sections_mask:np.array) -> np.array: 
+def _draw_mask_contours(contours_arr:np.ndarray, n:int, mask_data:dict, sections_mask:np.ndarray) -> np.ndarray: 
     contours, hierarchy = cv2.findContours(sections_mask.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     color_bgr = mask_data["color"][::-1]
     cv2.drawContours(contours_arr, contours, -1, color_bgr, 1)
     cv2.putText(contours_arr, text=mask_data['name'], org=(150,(n+1)*10),fontFace= cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.3, color=color_bgr, thickness=1, lineType=cv2.LINE_AA)
     return contours_arr
 
-def _draw_mask(sections_image, mask_data, mask_sections_path):
+def _draw_mask(sections_image:np.ndarray, mask_data:Dict, mask_sections_path:str):
     sections_mask = draw_2d_sections(mask_data["arr"], save_path=None)
     sections_image_w_mask = draw_2d_mask_on_scan(sections_image, sections_mask, mask_data["color"], mask_sections_path)
     return sections_mask

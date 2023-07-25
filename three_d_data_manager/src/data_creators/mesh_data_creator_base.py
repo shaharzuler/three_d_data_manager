@@ -16,5 +16,5 @@ class MeshDataCreatorBase(DataCreatorBase):
         self.mesh_path = os.path.join(self.subject_dir, self.default_filename + ".off") 
         return os.path.isfile(self.mesh_path)
 
-    def save_mesh_default_filename(self, verts:np.array, faces:np.array) -> None:
+    def save_mesh_default_filename(self, verts:np.ndarray, faces:np.ndarray) -> None:
         mesh_utils.write_off(self.mesh_path, verts, faces) 

@@ -16,7 +16,7 @@ from .mesh_utils import MeshContainer
 
 
 # The following function is based on code from https://github.com/omriefroni/dfaust_allign/visualization/vizualization_functions.py
-def visualize_grid_of_lbo(verts ,faces:np.array ,eigenvectors:np.array ,dirpath:str, max_lbos:int=None  , mesh_or_pc:str='mesh', prefix:str='', write_html:bool=True, save_image:bool=True, save_plotly_json:bool=True):
+def visualize_grid_of_lbo(verts ,faces:np.ndarray ,eigenvectors:np.ndarray ,dirpath:str, max_lbos:int=None  , mesh_or_pc:str='mesh', prefix:str='', write_html:bool=True, save_image:bool=True, save_plotly_json:bool=True):
     imgs = []
     paths = {
         "jsons":[],
