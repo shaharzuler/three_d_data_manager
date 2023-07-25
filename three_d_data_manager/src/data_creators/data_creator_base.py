@@ -1,4 +1,5 @@
 import os
+from typing import Dict
 
 from three_d_data_manager.src.file_paths import FilePaths
 
@@ -12,7 +13,7 @@ class DataCreatorBase:
         self.override: bool = override
         self.creation_args = creation_args
 
-    def add_sample(self, target_root_dir:str, dataset_attrs:dict[str,str]):
+    def add_sample(self, target_root_dir:str, dataset_attrs:Dict[str,str]):
         if self.hirarchy_levels>2:
             self.sample_dir = os.path.join(target_root_dir, self.sample_name, *([self.version_name]*self.hirarchy_levels))
         else: 
@@ -22,10 +23,10 @@ class DataCreatorBase:
         self.subject_dir = os.path.join(self.sample_dir, self.default_dirname)
         os.makedirs(self.subject_dir, exist_ok=True)
 
-    def add_sample_from_file(self, file, target_root_dir:str, file_paths:FilePaths, dataset_attrs:dict[str,str]):
+    def add_sample_from_file(self, file, target_root_dir:str, file_paths:FilePaths, dataset_attrs:Dict[str,str]):
         raise NotImplementedError
 
-    def get_properties(self) -> dict[str, any]:
+    def get_properties(self) -> Dict[str, any]:
         return {}
 
     def check_if_exists(self, filename:str) -> bool:

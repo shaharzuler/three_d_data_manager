@@ -1,5 +1,6 @@
 from dataclasses import asdict
 import os
+from typing import Dict
 
 import numpy as np
 import open3d as o3d
@@ -16,7 +17,7 @@ class LBOsDataCreator(DataCreatorBase):
         self.default_dirname = "lbos"
         self.default_filename = "lbo_data" 
     
-    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:dict[str,str]=None) -> FilePaths:
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:Dict[str,str]=None) -> FilePaths:
         if self.source_path != None:
             raise NotImplementedError("Loading from source path is not supported in this class")
         super().add_sample(target_root_dir, dataset_attrs)

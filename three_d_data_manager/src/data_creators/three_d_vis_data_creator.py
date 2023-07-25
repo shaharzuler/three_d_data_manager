@@ -1,4 +1,5 @@
 from dataclasses import asdict
+from typing import Dict
 import numpy as np
 
 from .data_creator_base import DataCreatorBase
@@ -12,7 +13,7 @@ class ThreeDVisDataCreator(DataCreatorBase):
         self.default_dirname = "3d_visualization"
         self.default_smooth_filename = "3d_smooth"
 
-    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:dict[str,str]=None) -> FilePaths: # override=False is not supported
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:Dict[str,str]=None) -> FilePaths: # override=False is not supported
         super().add_sample(target_root_dir, dataset_attrs) 
         
         lbo_visualization_path = mesh_3d_visualization_utils.visualize_grid_of_lbo(   

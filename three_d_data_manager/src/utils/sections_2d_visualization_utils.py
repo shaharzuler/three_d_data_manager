@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import os
+from typing import Dict, List
 
 from PIL import Image
 import numpy as np
@@ -53,7 +54,7 @@ def draw_2d_mask_on_scan(sections_image:np.array, sections_mask:np.array, color:
 
     return img_w_mask
 
-def draw_masks_and_contours(sections_image:np.array, masks_data:list[dict[str, any((str, np.array, tuple))]], target_root_dir:str, file_paths:FilePaths, name:str) -> FilePaths:
+def draw_masks_and_contours(sections_image:np.array, masks_data:List[Dict[str, any((str, np.array, tuple))]], target_root_dir:str, file_paths:FilePaths, name:str) -> FilePaths:
     contours_arr = cv2.cvtColor(sections_image, cv2.COLOR_GRAY2BGR)
     for n, mask_data in enumerate(masks_data):
         contours_arr, file_paths = _draw_single_mask_and_contour(sections_image, contours_arr, n, mask_data, target_root_dir, file_paths, name)
@@ -64,7 +65,7 @@ def draw_masks_and_contours(sections_image:np.array, masks_data:list[dict[str, a
     
     return file_paths
 
-def _draw_single_mask_and_contour(sections_image:np.array, contours_arr:np.array, n:int, mask_data:list[dict[str, any((str, np.array, tuple))]], target_root_dir:str, file_paths, name:str):#:FilePaths)-> tuple[np.array, FilePaths]:
+def _draw_single_mask_and_contour(sections_image:np.array, contours_arr:np.array, n:int, mask_data:List[Dict[str, any((str, np.array, tuple))]], target_root_dir:str, file_paths, name:str):
     mask_sections_path = os.path.join(target_root_dir, f"n{n}_{mask_data['name']}.jpg")
     file_paths.add_path(f"n{n}_{mask_data['name']}", name, mask_sections_path)
 

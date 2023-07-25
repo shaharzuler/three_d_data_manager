@@ -1,5 +1,6 @@
 
 from dataclasses import asdict
+from typing import Dict
 
 import numpy as np
 
@@ -14,7 +15,7 @@ class SmoothVoxelsMaskDataCreator(ThreeDArrDataCreatorBase):
         self.default_dirname = "voxels"
         self.default_filename = "xyz_voxels_mask_smooth"
 
-    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:dict[str,str]=None) -> FilePaths:
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:Dict[str,str]=None) -> FilePaths:
         super().add_sample(target_root_dir, dataset_attrs)
         if not self.check_if_exists_default_filename() or self.override:
             if self.source_path is None:

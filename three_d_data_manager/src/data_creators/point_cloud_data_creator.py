@@ -1,7 +1,7 @@
 from dataclasses import asdict
 import os
+from typing import Dict
 
-import numpy as np
 import open3d as o3d
 
 from .mesh_data_creator_base import DataCreatorBase
@@ -20,7 +20,7 @@ class PointCloudDataCreator(DataCreatorBase):
         self.point_cloud_path = os.path.join(self.subject_dir, f"{self.filename}.ply") 
         return os.path.isfile(self.point_cloud_path)
 
-    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:dict[str,str]=None) -> FilePaths:
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:Dict[str,str]=None) -> FilePaths:
         super().add_sample(target_root_dir, dataset_attrs)
         if not self.check_if_exists_default_filename() or self.override:
             if self.source_path is None:

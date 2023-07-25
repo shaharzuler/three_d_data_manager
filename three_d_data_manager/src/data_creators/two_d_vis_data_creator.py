@@ -1,6 +1,7 @@
 
 from dataclasses import asdict
 import os
+from typing import Dict
 
 from .data_creator_base import DataCreatorBase
 from three_d_data_manager.src.file_paths import FilePaths
@@ -14,7 +15,7 @@ class TwoDVisDataCreator(DataCreatorBase):
         self.default_dirname = "2d_sections_visualization"
         self.default_filename = "2d_sections"
 
-    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:dict[str,str]=None) -> FilePaths: # does not support override=False
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:Dict[str,str]=None) -> FilePaths: # does not support override=False
         super().add_sample(target_root_dir, dataset_attrs)
         img_sections_path = os.path.join(self.subject_dir, f"scan_{self.default_filename}.jpg") 
         file_paths.add_path("scan_sections", self.sample_name, img_sections_path)

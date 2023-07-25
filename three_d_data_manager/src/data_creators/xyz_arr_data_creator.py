@@ -1,5 +1,6 @@
 
 from dataclasses import asdict
+from typing import Dict
 
 import numpy as np
 
@@ -19,7 +20,7 @@ class XYZArrDataCreator(ThreeDArrDataCreatorBase):
         self.xyz_arr = dicom_utils.images_to_3d_arr(dicom_dir, int(self.sample_name))
         return self.xyz_arr
 
-    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:dict[str,str]=None) -> FilePaths:
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:Dict[str,str]=None) -> FilePaths:
         super().add_sample(target_root_dir, dataset_attrs)
         if not self.check_if_exists_default_filename() or self.override:
             if self.source_path is None:

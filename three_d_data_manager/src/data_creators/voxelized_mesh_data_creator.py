@@ -1,4 +1,5 @@
 from dataclasses import asdict
+from typing import Dict
 
 import numpy as np
 
@@ -14,7 +15,7 @@ class VoxelizedMeshDataCreator(ThreeDArrDataCreatorBase):
         self.default_filename = "voxelized"
         self.prefix = "xyz"
 
-    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:dict[str,str]=None) -> FilePaths:
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:Dict[str,str]=None) -> FilePaths:
         mesh_filename = self.creation_args.mesh_path.split("/")[-1].split(".off")[0]
         filename = f"{self.prefix}_{mesh_filename}_{self.default_filename}"
         super().add_sample(target_root_dir, dataset_attrs)

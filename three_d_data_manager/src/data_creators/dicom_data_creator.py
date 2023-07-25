@@ -1,6 +1,7 @@
 from dataclasses import asdict
 import shutil
 import os
+from typing import Dict
 
 from .data_creator_base import DataCreatorBase
 from three_d_data_manager.src.file_paths import FilePaths
@@ -13,7 +14,7 @@ class DicomDataCreator(DataCreatorBase):
         super().__init__(source_path, sample_name, hirarchy_levels, creation_args=creation_args)
         self.default_dirname = "DICOM"
     
-    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:dict[str,str]=None) -> FilePaths:
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:Dict[str,str]=None) -> FilePaths:
         super().add_sample(target_root_dir, dataset_attrs)
 
         try:
@@ -32,7 +33,7 @@ class DicomDataCreator(DataCreatorBase):
 
         return file_paths
 
-    def get_properties(self) -> dict[str, any]:
+    def get_properties(self) -> Dict[str, any]:
         slice_path = self.dicom_target_file_paths[0]
         voxel_size = dicom_utils.get_voxel_size(slice_path)
         properties = {

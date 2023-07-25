@@ -1,6 +1,7 @@
 from dataclasses import asdict
-import scipy
+from typing import Dict
 
+import scipy
 import numpy as np
 
 from .three_d_arr_data_creator_base import ThreeDArrDataCreatorBase
@@ -14,7 +15,7 @@ class ZXYVoxelsMaskDataCreator(ThreeDArrDataCreatorBase):
         self.default_dirname = "voxels"
         self.default_filename = "zxy_voxels_mask_raw"
     
-    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:dict[str,str]=None) -> FilePaths:
+    def add_sample(self, target_root_dir:str, file_paths:FilePaths, dataset_attrs:Dict[str,str]=None) -> FilePaths:
         super().add_sample(target_root_dir, dataset_attrs)
         if not self.check_if_exists_default_filename() or self.override:
             output_arr = np.load(self.source_path)
