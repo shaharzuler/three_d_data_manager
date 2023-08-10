@@ -24,7 +24,7 @@ class PointCloudDataCreator(DataCreatorBase):
         super().add_sample(target_root_dir, dataset_attrs)
         if not self.check_if_exists_default_filename() or self.override:
             if self.source_path is None:
-                mesh_o3d = o3d.io.read_triangle_mesh(file_paths.mesh[self.sample_name])
+                mesh_o3d = o3d.io.read_triangle_mesh(self.creation_args.mesh_path)#file_paths.mesh[self.sample_name])
                 mesh_o3d.compute_vertex_normals()
                 point_cloud = mesh_o3d.sample_points_uniformly(number_of_points=int(self.creation_args.num_points))
             else:

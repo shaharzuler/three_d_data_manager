@@ -78,7 +78,7 @@ smooth_lbo_mesh_data_creator = SmoothLBOMeshDataCreator(source_path=None, sample
 dataset.add_sample(smooth_lbo_mesh_data_creator)
 
 # create point cloud from smooth mesh
-point_cloud_creation_args = PointCloudCreationArgs(num_points=1E4, mesh_path=dataset.file_paths.mesh[sample_name], orig_mesh_name="mesh_smooth") 
+point_cloud_creation_args = PointCloudCreationArgs(num_points=1E4, mesh_path=dataset.file_paths.mesh_smooth[sample_name], orig_mesh_name="mesh_smooth") 
 point_cloud_data_creator = PointCloudDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=point_cloud_creation_args)
 dataset.add_sample(point_cloud_data_creator)
 
@@ -97,7 +97,6 @@ smooth_mesh_voxelizing_args = VoxelizingCreationArgs(mesh_path=dataset.file_path
 voxelized_smooth_mesh_data_creator = VoxelizedMeshDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=smooth_mesh_voxelizing_args)
 dataset.add_sample(voxelized_smooth_mesh_data_creator)
 
-
 # create lbos from smooth mesh
 smooth_lbo_creation_args = LBOCreationArgs(num_LBOs=300, is_point_cloud=False, geometry_path=dataset.file_paths.mesh_smooth[sample_name], orig_geometry_name="mesh_smooth", use_torch=True)
 smooth_lbos_data_creator = LBOsDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=smooth_lbo_creation_args)
@@ -115,8 +114,8 @@ convex_mesh_voxelizing_args = VoxelizingCreationArgs(mesh_path=dataset.file_path
 voxelized_convex_mesh_data_creator = VoxelizedMeshDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=convex_mesh_voxelizing_args)
 dataset.add_sample(voxelized_convex_mesh_data_creator)
 
-# create point cloud from smooth mesh
-point_cloud_creation_args = PointCloudCreationArgs(num_points=1E4, mesh_path=dataset.file_paths.mesh[sample_name], orig_mesh_name="mesh_convex") 
+# create point cloud from convex mesh
+point_cloud_creation_args = PointCloudCreationArgs(num_points=1E4, mesh_path=dataset.file_paths.mesh_convex[sample_name], orig_mesh_name="mesh_convex") 
 point_cloud_data_creator = PointCloudDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=point_cloud_creation_args)
 dataset.add_sample(point_cloud_data_creator)
 

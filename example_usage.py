@@ -83,7 +83,7 @@ for sample_name, zxy_voxels_mask_arr_path in zip(timesteps, zxy_voxels_mask_arr_
     dataset.add_sample(smooth_lbos_data_creator)
 
     # create point cloud from smooth mesh
-    smooth_pcd_point_cloud_creation_args = PointCloudCreationArgs(num_points=1E3, mesh_path=dataset.file_paths.mesh[sample_name], orig_mesh_name="mesh_smooth") 
+    smooth_pcd_point_cloud_creation_args = PointCloudCreationArgs(num_points=1E3, mesh_path=dataset.file_paths.mesh_smooth[sample_name], orig_mesh_name="mesh_smooth") 
     smooth_pcd_point_cloud_data_creator = PointCloudDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=smooth_pcd_point_cloud_creation_args)
     dataset.add_sample(smooth_pcd_point_cloud_data_creator)
 
@@ -115,7 +115,7 @@ for sample_name, zxy_voxels_mask_arr_path in zip(timesteps, zxy_voxels_mask_arr_
     dataset.add_sample(convex_lbos_data_creator)
 
     # create point cloud from convex mesh
-    convex_point_cloud_creation_args = PointCloudCreationArgs(num_points=1E3, mesh_path=dataset.file_paths.mesh[sample_name], orig_mesh_name="mesh_convex") 
+    convex_point_cloud_creation_args = PointCloudCreationArgs(num_points=1E3, mesh_path=dataset.file_paths.mesh_convex[sample_name], orig_mesh_name="mesh_convex") 
     convex_point_cloud_data_creator = PointCloudDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=convex_point_cloud_creation_args)
     dataset.add_sample(convex_point_cloud_data_creator)
 
