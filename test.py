@@ -83,7 +83,7 @@ point_cloud_data_creator = PointCloudDataCreator(source_path=None, sample_name=s
 dataset.add_sample(point_cloud_data_creator)
 
 # create lbos from point cloud
-lbo_creation_args = LBOCreationArgs(num_LBOs=300, is_point_cloud=True, geometry_path=dataset.file_paths.point_cloud_from_mesh[sample_name], orig_geometry_name="point_cloud_from_mesh_smooth", use_torch=True)
+lbo_creation_args = LBOCreationArgs(num_LBOs=300, is_point_cloud=True, geometry_path=dataset.file_paths.point_cloud_from_mesh_smooth[sample_name], orig_geometry_name="point_cloud_from_mesh_smooth", use_torch=True)
 lbos_data_creator = LBOsDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=lbo_creation_args)
 dataset.add_sample(lbos_data_creator)
 
