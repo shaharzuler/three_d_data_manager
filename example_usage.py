@@ -120,7 +120,7 @@ for sample_name, zxy_voxels_mask_arr_path in zip(timesteps, zxy_voxels_mask_arr_
     dataset.add_sample(convex_point_cloud_data_creator)
 
     # create lbos from point cloud
-    convex_pcd_lbo_creation_args = LBOCreationArgs(num_LBOs=300, is_point_cloud=True, geometry_path=dataset.file_paths.point_cloud_from_mesh[sample_name], orig_geometry_name="point_cloud_from_mesh_convex", use_torch=True)
+    convex_pcd_lbo_creation_args = LBOCreationArgs(num_LBOs=300, is_point_cloud=True, geometry_path=dataset.file_paths.point_cloud_from_mesh_convex[sample_name], orig_geometry_name="point_cloud_from_mesh_convex", use_torch=True)
     convex_pcd_lbos_data_creator = LBOsDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=convex_pcd_lbo_creation_args)
     dataset.add_sample(convex_pcd_lbos_data_creator)
 
