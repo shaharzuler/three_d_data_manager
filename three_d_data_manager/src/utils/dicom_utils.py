@@ -18,7 +18,8 @@ def images_to_3d_arr(dir_name, img_num):
 
     # assuming all slices have the same pixel aspects
     pixel_spacing = slices[0].PixelSpacing
-    slice_thickness = slices[0].SliceThickness
+    # slice_thickness = slices[0].SliceThickness
+    slice_thickness = abs(slices[1].SliceLocation - slices[0].SliceLocation)
 
     img3d, voxel_size = _slices_to_3d_arr(slices, pixel_spacing, slice_thickness)
 
