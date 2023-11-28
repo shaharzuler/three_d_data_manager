@@ -29,9 +29,9 @@ if magix:
     # output_mesh_dir = r"/home/shahar/data/magix/only_ts_30/manual_stl_seg_mirror"
     # output_arr_dir = r"/home/shahar/data/magix/only_ts_30/manual_np_seg"
 
-    orig_mesh_dir = r"/home/shahar/data/magix/manual_stl_seg"
-    output_mesh_dir = r"/home/shahar/data/magix/manual_stl_seg_mirror"
-    output_arr_dir = r"/home/shahar/data/magix/manual_np_seg"
+    orig_mesh_dir = r"/home/shahar/data/magix/shahar_myo/ts_90/manual_stl_shahar_myo_seg" # r"/home/shahar/data/magix/nati_lumen/manual_stl_seg"
+    output_mesh_dir = r"/home/shahar/data/magix/shahar_myo/ts_90/manual_stl_shahar_myo_seg_mirror"
+    output_arr_dir = r"/home/shahar/data/magix/shahar_myo/ts_90/manual_np_shahar_myo_seg"
 
 
 elif mgh:

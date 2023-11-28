@@ -1,6 +1,6 @@
 # TODO error of discretisation of voxels -> mesh -> voxels (*)
 # TODO read all args from config including dicom + seg data path (!)
-# TODO maybe user desides which format gets saved and which is created on the fly. (*)
+# TODO maybe user decides which format gets saved and which is created on the fly. (*)
 
 
 import os
@@ -9,13 +9,13 @@ from three_d_data_manager import Dataset
 from three_d_data_manager import ConvexMeshDataCreator, DicomDataCreator, H5DataCreator, LBOsDataCreator, MeshDataCreator, SmoothLBOMeshDataCreator, VoxelizedMeshDataCreator, XYZArrDataCreator, XYZVoxelsMaskDataCreator, SmoothVoxelsMaskDataCreator, ZXYVoxelsMaskDataCreator, TwoDVisDataCreator, ThreeDVisDataCreator, PointCloudDataCreator
 from three_d_data_manager import H5DatasetCreationArgs, MeshSmoothingCreationArgs, SmoothMeshCreationArgs, VoxelSmoothingCreationArgs, LBOCreationArgs, VoxelizingCreationArgs, TwoDVisualizationCreationArgs, ThreeDVisualizationCreationArgs, PointCloudCreationArgs
 
-sample_name = "18"
+sample_name = "01" # "18"
 # create dataset
-dataset_target_path = os.path.join("/","home","shahar","data","cardiac_3d_data")
+dataset_target_path = os.path.join("/","home","shahar","data","cardiac_3d_data_magix_scale_exp")# os.path.join("/","home","shahar","data","cardiac_3d_data")
 dataset = Dataset(dataset_target_path)
 
 # add dicom
-dicom_path = os.path.join("/","home","shahar","projects","4dct_data","20","20","Anonymized - 859733","Ctacoc","DS_CorCTABi 1.5 B25f 0-95% Matrix 256 - 12")
+dicom_path = os.path.join("/","home","shahar","data","magix","ct_dicom_scans","Cir  CardiacCirc  3.0  B20f  0-90_ RETARD_DECLECHEMENT 30 _ - 10") # os.path.join("/","home","shahar","projects","4dct_data","20","20","Anonymized - 859733","Ctacoc","DS_CorCTABi 1.5 B25f 0-95% Matrix 256 - 12")
 dicom_data_creator = DicomDataCreator(dicom_path, sample_name=sample_name, hirarchy_levels=2)
 dataset.add_sample(dicom_data_creator)
 
@@ -24,7 +24,7 @@ xyz_arr_data_creator = XYZArrDataCreator(None, sample_name, 2)
 dataset.add_sample(xyz_arr_data_creator)
 
 # add segmentation mask
-zxy_voxels_mask_arr_path = os.path.join("/","home","shahar","projects","flow","_4DCTCostUnrolling-main","warped_seg_maps2", "from_18", "seg_20_18to18.npy") 
+zxy_voxels_mask_arr_path = "/home/shahar/data/magix/manual_np_seg/CIR_30_NEW_to_CIR_30_NEW.npy" # os.path.join("/","home","shahar","projects","flow","_4DCTCostUnrolling-main","warped_seg_maps2", "from_18", "seg_20_18to18.npy") 
 zxy_voxels_mask_data_creator = ZXYVoxelsMaskDataCreator(zxy_voxels_mask_arr_path, sample_name, 2)
 dataset.add_sample(zxy_voxels_mask_data_creator)
 
@@ -139,20 +139,20 @@ convex_h5_dataset_creation_args = H5DatasetCreationArgs(orig_name="mesh_convex",
 convex_h5_dataset_data_creator =  H5DataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=convex_h5_dataset_creation_args)
 dataset.add_sample(convex_h5_dataset_data_creator)
 
-# getters:
-xyz_voxels_mask_arr = dataset.get_xyz_voxels_mask(sample_name)
-xyz_voxels_mask_smooth = dataset.get_smooth_voxels_mask(sample_name)
-xyz_arr = dataset.get_xyz_arr(sample_name)
-zxy_arr = dataset.get_zxy_arr(sample_name)
-mesh_verts, mesh_faces = dataset.get_mesh(sample_name)
-smooth_mesh_verts, smooth_mesh_faces = dataset.get_smooth_mesh(sample_name)
-lbo_eigenvectors, lbo_eigenvalues, lbo_area_weights = dataset.get_mesh_lbo_data(sample_name)
-convex_verts, convex_faces =  dataset.get_convex_mesh(sample_name)
-voxelized_smooth_mesh = dataset.get_voxelized_smooth_mesh(sample_name)
-voxelized_convex_mesh = dataset.get_voxelized_convex_mesh(sample_name)
-point_cloud = dataset.get_point_cloud(sample_name)
-smooth_point_cloud = dataset.get_smooth_point_cloud(sample_name)
-convex_point_cloud = dataset.get_convex_point_cloud(sample_name)
+# # getters:
+# xyz_voxels_mask_arr = dataset.get_xyz_voxels_mask(sample_name)
+# xyz_voxels_mask_smooth = dataset.get_smooth_voxels_mask(sample_name)
+# xyz_arr = dataset.get_xyz_arr(sample_name)
+# zxy_arr = dataset.get_zxy_arr(sample_name)
+# mesh_verts, mesh_faces = dataset.get_mesh(sample_name)
+# smooth_mesh_verts, smooth_mesh_faces = dataset.get_smooth_mesh(sample_name)
+# lbo_eigenvectors, lbo_eigenvalues, lbo_area_weights = dataset.get_mesh_lbo_data(sample_name)
+# convex_verts, convex_faces =  dataset.get_convex_mesh(sample_name)
+# voxelized_smooth_mesh = dataset.get_voxelized_smooth_mesh(sample_name)
+# voxelized_convex_mesh = dataset.get_voxelized_convex_mesh(sample_name)
+# point_cloud = dataset.get_point_cloud(sample_name)
+# smooth_point_cloud = dataset.get_smooth_point_cloud(sample_name)
+# convex_point_cloud = dataset.get_convex_point_cloud(sample_name)
 
 # create single sample level visualizations
 two_d_visualization_args = TwoDVisualizationCreationArgs()
