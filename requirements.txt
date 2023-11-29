@@ -17,3 +17,4 @@ meshio>=5.3.4
 opencv-python>=4.7.0.72
 kaleido>=0.2.1
 h5py>=3.8.0
+nibabel>=5.1.0
