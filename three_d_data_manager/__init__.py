@@ -8,9 +8,9 @@ from .src.data_creators.point_cloud_data_creator import PointCloudDataCreator
 from .src.data_creators.smooth_lbo_mesh_data_creator import SmoothLBOMeshDataCreator
 from .src.data_creators.voxelized_mesh_data_creator import VoxelizedMeshDataCreator
 from .src.data_creators.xyz_arr_data_creator import XYZArrDataCreator
-from .src.data_creators.xyz_voxels_mask_data_creator import XYZVoxelsMaskDataCreator
-from .src.data_creators.smooth_voxels_mask_data_creator import SmoothVoxelsMaskDataCreator
-from .src.data_creators.zxy_voxels_mask_data_creator import ZXYVoxelsMaskDataCreator
+from .src.data_creators.xyz_voxels_mask_data_creator import XYZVoxelsMaskDataCreator, XYZVoxelsExtraMaskDataCreator
+from .src.data_creators.smooth_voxels_mask_data_creator import SmoothVoxelsMaskDataCreator, SmoothVoxelsExtraMaskDataCreator
+from .src.data_creators.zxy_voxels_mask_data_creator import ZXYVoxelsMaskDataCreator, ZXYVoxelsExtraMaskDataCreator
 from .src.data_creators.two_d_vis_data_creator import TwoDVisDataCreator
 from .src.data_creators.three_d_vis_data_creator import ThreeDVisDataCreator
 

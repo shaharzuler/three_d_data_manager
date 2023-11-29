@@ -2,11 +2,12 @@
 # TODO read all args from config including dicom + seg data path (!)
 # TODO maybe user decides which format gets saved and which is created on the fly. (*)
 
+#TODO: vis 2D of extra mask, add extra mask to readme and test/run files, test fucntionallity
 
 import os
 
 from three_d_data_manager import Dataset
-from three_d_data_manager import ConvexMeshDataCreator, DicomDataCreator, H5DataCreator, LBOsDataCreator, MeshDataCreator, SmoothLBOMeshDataCreator, VoxelizedMeshDataCreator, XYZArrDataCreator, XYZVoxelsMaskDataCreator, SmoothVoxelsMaskDataCreator, ZXYVoxelsMaskDataCreator, TwoDVisDataCreator, ThreeDVisDataCreator, PointCloudDataCreator
+from three_d_data_manager import ConvexMeshDataCreator, DicomDataCreator, H5DataCreator, LBOsDataCreator, MeshDataCreator, SmoothLBOMeshDataCreator, VoxelizedMeshDataCreator, XYZArrDataCreator, XYZVoxelsMaskDataCreator, XYZVoxelsExtraMaskDataCreator, SmoothVoxelsMaskDataCreator, SmoothVoxelsExtraMaskDataCreator, ZXYVoxelsMaskDataCreator, ZXYVoxelsExtraMaskDataCreator, TwoDVisDataCreator, ThreeDVisDataCreator, PointCloudDataCreator
 from three_d_data_manager import H5DatasetCreationArgs, MeshSmoothingCreationArgs, SmoothMeshCreationArgs, VoxelSmoothingCreationArgs, LBOCreationArgs, VoxelizingCreationArgs, TwoDVisualizationCreationArgs, ThreeDVisualizationCreationArgs, PointCloudCreationArgs
 
 sample_name = "01" # "18"
@@ -28,14 +29,33 @@ zxy_voxels_mask_arr_path = "/home/shahar/data/magix/manual_np_seg/CIR_30_NEW_to_
 zxy_voxels_mask_data_creator = ZXYVoxelsMaskDataCreator(zxy_voxels_mask_arr_path, sample_name, 2)
 dataset.add_sample(zxy_voxels_mask_data_creator)
 
+################
+# add extra segmentation extra mask
+zxy_voxels_extra_mask_arr_path = "/home/shahar/data/magix/manual_np_seg/CIR_30_NEW_to_CIR_30_NEW.npy" # os.path.join("/","home","shahar","projects","flow","_4DCTCostUnrolling-main","warped_seg_maps2", "from_18", "seg_20_18to18.npy") 
+zxy_voxels_extra_mask_data_creator = ZXYVoxelsExtraMaskDataCreator(zxy_voxels_extra_mask_arr_path, sample_name, 2)
+dataset.add_sample(zxy_voxels_extra_mask_data_creator)
+################
+
 # zxy to xyz
 xyz_voxels_mask_data_creator = XYZVoxelsMaskDataCreator(None, sample_name, 2)
 dataset.add_sample(xyz_voxels_mask_data_creator) #_from_file
+
+################
+# zxy to xyz
+xyz_voxels_extra_mask_data_creator = XYZVoxelsExtraMaskDataCreator(None, sample_name, 2)
+dataset.add_sample(xyz_voxels_extra_mask_data_creator) #_from_file
+################
 
 # smooth mask with voxels methods
 voxel_smoothing_args = VoxelSmoothingCreationArgs(opening_footprint_radius=7, fill_holes_Area_threshold=1000, closing_to_opening_ratio=0.85)
 smooth_voxel_mask_data_creator = SmoothVoxelsMaskDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=voxel_smoothing_args)
 dataset.add_sample(smooth_voxel_mask_data_creator)
+
+################
+# smooth extra mask with voxels methods
+smooth_voxel_extra_mask_data_creator = SmoothVoxelsExtraMaskDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=voxel_smoothing_args)
+dataset.add_sample(smooth_voxel_mask_data_creator)
+################
 
 # create mesh from voxels
 mesh_creation_args = MeshSmoothingCreationArgs(marching_cubes_step_size=1) 

@@ -19,7 +19,8 @@ class SmoothVoxelsMaskDataCreator(ThreeDArrDataCreatorBase):
         super().add_sample(target_root_dir, dataset_attrs)
         if not self.check_if_exists_default_filename() or self.override:
             if self.source_path is None:
-                xyz_voxels_mask_arr = np.load(file_paths.xyz_voxels_mask_raw[self.sample_name])
+                source_path = self._get_source_path(file_paths)
+                xyz_voxels_mask_arr = np.load(source_path)
                 xyz_voxels_mask_smooth = voxels_utils.fill_holes(masks_arr=xyz_voxels_mask_arr, area_threshold=self.creation_args.fill_holes_Area_threshold)
                 xyz_voxels_mask_smooth = voxels_utils.voxel_smoothing(xyz_voxels_mask_smooth, self.creation_args.opening_footprint_radius, self.creation_args.closing_to_opening_ratio) 
                 output_arr = voxels_utils.fill_holes(masks_arr=xyz_voxels_mask_smooth, area_threshold=self.creation_args.fill_holes_Area_threshold)
@@ -29,6 +30,14 @@ class SmoothVoxelsMaskDataCreator(ThreeDArrDataCreatorBase):
             if self.creation_args is not None:
                 os_utils.write_config_file(self.subject_dir, self.default_filename, asdict(self.creation_args)) 
 
-        file_paths.add_path("xyz_voxels_mask_smooth",  self.sample_name, self.arr_path)
+        file_paths.add_path(self.default_filename,  self.sample_name, self.arr_path)
 
         return file_paths
+
+    def _get_source_path(self, file_paths):
+        return file_paths.xyz_voxels_mask_raw[self.sample_name]
+
+class SmoothVoxelsExtraMaskDataCreator(SmoothVoxelsMaskDataCreator):
+    def __init__(self, source_path:str, sample_name:str, hirarchy_levels:int, creation_args=None) -> None:
+        super().__init__(source_path, sample_name, hirarchy_levels, creation_args)
+        self.default_filename = "xyz_voxels_extra_mask_smooth"

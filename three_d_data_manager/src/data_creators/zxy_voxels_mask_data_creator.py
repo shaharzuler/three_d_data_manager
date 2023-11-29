@@ -29,6 +29,11 @@ class ZXYVoxelsMaskDataCreator(ThreeDArrDataCreatorBase):
         if self.creation_args is not None:
             os_utils.write_config_file(self.subject_dir, self.default_filename, asdict(self.creation_args))
 
-        file_paths.add_path("zxy_voxels_mask_raw",  self.sample_name, self.arr_path)
+        file_paths.add_path(self.default_filename,  self.sample_name, self.arr_path)
 
         return file_paths
+
+class ZXYVoxelsExtraMaskDataCreator(ZXYVoxelsMaskDataCreator):
+    def __init__(self, source_path:str, sample_name:str, hirarchy_levels:int, creation_args=None) -> None:
+        super().__init__(source_path, sample_name, hirarchy_levels, creation_args)
+        self.default_filename = "zxy_voxels_extra_mask_raw"

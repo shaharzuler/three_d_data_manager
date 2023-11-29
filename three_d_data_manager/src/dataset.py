@@ -38,9 +38,17 @@ class Dataset:
         zxy_voxels_mask_arr = np.load(self.file_paths.zxy_voxels_mask_raw[name])
         return zxy_voxels_mask_arr
 
+    def get_zxy_voxels_extra_mask(self, name:str) -> np.array:
+        zxy_voxels_extra_mask_arr = np.load(self.file_paths.zxy_voxels_extra_mask_raw[name])
+        return zxy_voxels_extra_mask_arr
+
     def get_xyz_voxels_mask(self, name:str) -> np.array:
         xyz_voxels_mask_arr = np.load(self.file_paths.xyz_voxels_mask_raw[name])
         return xyz_voxels_mask_arr
+
+    def get_xyz_voxels_extra_mask(self, name:str) -> np.array:
+        xyz_voxels_extra_mask_arr = np.load(self.file_paths.xyz_voxels_extra_mask_raw[name])
+        return xyz_voxels_extra_mask_arr
 
     def get_xyz_arr(self, name:str) -> np.array:
         xyz_arr = np.load(self.file_paths.xyz_arr[name])
@@ -54,6 +62,10 @@ class Dataset:
     def get_smooth_voxels_mask(self, name:str) -> np.array:
         xyz_voxels_mask_smooth = np.load(self.file_paths.xyz_voxels_mask_smooth[name])    
         return xyz_voxels_mask_smooth
+
+    def get_smooth_voxels_extra_mask(self, name:str) -> np.array:
+        xyz_voxels_extra_mask_smooth = np.load(self.file_paths.xyz_voxels_extra_mask_smooth[name])    
+        return xyz_voxels_extra_mask_smooth
 
     def get_mesh(self, name:str) -> np.array:
         mesh = mesh_utils.read_off(self.file_paths.mesh[name])    
@@ -108,7 +120,11 @@ class Dataset:
 
     def visualize_existing_data_sections(self, two_d_visualization_data_creator):
         two_d_visualization_data_creator.creation_args.xyz_scan_arr = self.get_xyz_arr(two_d_visualization_data_creator.sample_name)
-        two_d_visualization_data_creator.creation_args.masks_data = [
+        two_d_visualization_data_creator.creation_args.masks_data = self._get_masks_data(two_d_visualization_data_creator)
+        self.add_sample(two_d_visualization_data_creator)
+
+    def _get_masks_data(self, two_d_visualization_data_creator):
+        masks_data = [
             {
                 "name": "raw_mask_sections",
                 "arr": self.get_xyz_voxels_mask(two_d_visualization_data_creator.sample_name),
@@ -135,7 +151,7 @@ class Dataset:
                 "color": sections_2d_visualization_utils.colors.GREEN_RGB
             },
         ]
-        self.add_sample(two_d_visualization_data_creator)
+        return masks_data
 
     def visualize_existing_data_3d(self, three_d_visualization_data_creator):
         three_d_visualization_data_creator.creation_args.smooth_mesh_verts, three_d_visualization_data_creator.creation_args.smooth_mesh_faces = self.get_smooth_mesh(three_d_visualization_data_creator.sample_name)
