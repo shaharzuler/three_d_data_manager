@@ -9,9 +9,12 @@ class FilePaths:
     xyz_arr: Dict[str, str] = None
 
     zxy_voxels_mask_raw: Dict[str, str] = None
+    zxy_voxels_extra_mask_raw: Dict[str, str] = None
 
     xyz_voxels_mask_raw: Dict[str, str] = None
+    xyz_voxels_extra_mask_raw: Dict[str, str] = None
     xyz_voxels_mask_smooth: Dict[str, str] = None
+    xyz_voxels_extra_mask_smooth: Dict[str, str] = None
 
     mesh: Dict[str, str] = None
     mesh_lbo_data: Dict[str, str] = None
@@ -36,7 +39,6 @@ class FilePaths:
     point_cloud_from_mesh_convex_lbo_data: Dict[str, str] = None
     point_cloud_from_mesh_convex_dataset: Dict[str, str] = None
     xyz_convex_mesh_voxelized: Dict[str, str] = None
-
 
     scan_sections: Dict[str, str] = None
     section_contours: Dict[str, str] = None
