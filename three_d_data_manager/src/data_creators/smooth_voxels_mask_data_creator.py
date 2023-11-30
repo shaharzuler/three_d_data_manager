@@ -43,4 +43,4 @@ class SmoothVoxelsExtraMaskDataCreator(SmoothVoxelsMaskDataCreator):
         self.default_filename = "xyz_voxels_extra_mask_smooth"
 
     def _get_source_path(self, file_paths):
-        return file_paths.xyz_voxels_extra_mask_smooth[self.sample_name]    
+        return file_paths.xyz_voxels_extra_mask_raw[self.sample_name]    
