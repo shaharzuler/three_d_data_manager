@@ -1,6 +1,6 @@
 from three_d_data_manager import Dataset
-from three_d_data_manager import ConvexMeshDataCreator, DicomDataCreator, H5DataCreator, LBOsDataCreator, MeshDataCreator, SmoothLBOMeshDataCreator, VoxelizedMeshDataCreator, XYZArrDataCreator, XYZVoxelsMaskDataCreator, SmoothVoxelsMaskDataCreator, ZXYVoxelsMaskDataCreator, PointCloudDataCreator, TwoDVisDataCreator, ThreeDVisDataCreator
-from three_d_data_manager import H5DatasetCreationArgs, MeshSmoothingCreationArgs, SmoothMeshCreationArgs, VoxelSmoothingCreationArgs, LBOCreationArgs, VoxelizingCreationArgs, TwoDVisualizationCreationArgs, ThreeDVisualizationCreationArgs, PointCloudCreationArgs
+from three_d_data_manager import ConvexMeshDataCreator, DicomDataCreator, H5DataCreator, LBOsDataCreator, MeshDataCreator, SmoothLBOMeshDataCreator, VoxelizedMeshDataCreator, XYZArrDataCreator, XYZVoxelsMaskDataCreator, SmoothVoxelsMaskDataCreator, ZXYVoxelsMaskDataCreator, PointCloudDataCreator, TwoDVisDataCreator, ThreeDVisDataCreator, VertexNormalsDataCreator
+from three_d_data_manager import H5DatasetCreationArgs, MeshSmoothingCreationArgs, SmoothMeshCreationArgs, VoxelSmoothingCreationArgs, LBOCreationArgs, VoxelizingCreationArgs, TwoDVisualizationCreationArgs, ThreeDVisualizationCreationArgs, PointCloudCreationArgs, VertexNormalsCreationArgs
 
 
 
@@ -71,6 +71,11 @@ for sample_name, zxy_voxels_mask_arr_path in zip(timesteps, zxy_voxels_mask_arr_
     smooth_mesh_creation_args = SmoothMeshCreationArgs(lbos_path=dataset.file_paths.mesh_lbo_data[sample_name])
     smooth_lbo_mesh_data_creator = SmoothLBOMeshDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=smooth_mesh_creation_args)
     dataset.add_sample(smooth_lbo_mesh_data_creator)
+
+    # compute vertex normals for future angular validation
+    vertex_normals_creation_args = VertexNormalsCreationArgs(k_nn_for_normals_calc=50, geometry_path=dataset.file_paths.mesh_smooth[sample_name], orig_geometry_name="mesh_smooth") 
+    vertex_normals_data_creator = VertexNormalsDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=vertex_normals_creation_args)
+    dataset.add_sample(vertex_normals_data_creator)
 
     # voxelize smooth mesh back
     smooth_mesh_voxelizing_args = VoxelizingCreationArgs(mesh_path=dataset.file_paths.mesh_smooth[sample_name])

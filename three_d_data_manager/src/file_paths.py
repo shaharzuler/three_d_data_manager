@@ -19,6 +19,7 @@ class FilePaths:
     mesh: Dict[str, str] = None
     mesh_lbo_data: Dict[str, str] = None
     mesh_dataset: Dict[str, str] = None
+    vertices_normals_from_mesh: Dict[str, str] = None
     point_cloud_from_mesh: Dict[str, str] = None
     point_cloud_from_mesh_lbo_data: Dict[str, str] = None
     point_cloud_from_mesh_dataset: Dict[str, str] = None
@@ -27,6 +28,8 @@ class FilePaths:
     mesh_smooth: Dict[str, str] = None
     mesh_smooth_lbo_data: Dict[str, str] = None
     mesh_smooth_dataset: Dict[str, str] = None
+    vertices_normals_from_mesh_smooth: Dict[str, str] = None
+
     point_cloud_from_mesh_smooth: Dict[str, str] = None
     point_cloud_from_mesh_smooth_lbo_data: Dict[str, str] = None
     point_cloud_from_mesh_smooth_dataset: Dict[str, str] = None
@@ -35,6 +38,7 @@ class FilePaths:
     mesh_convex: Dict[str, str] = None
     mesh_convex_lbo_data: Dict[str, str] = None
     mesh_convex_dataset: Dict[str, str] = None
+    vertices_normals_from_mesh_convex: Dict[str, str] = None
     point_cloud_from_mesh_convex: Dict[str, str] = None
     point_cloud_from_mesh_convex_lbo_data: Dict[str, str] = None
     point_cloud_from_mesh_convex_dataset: Dict[str, str] = None

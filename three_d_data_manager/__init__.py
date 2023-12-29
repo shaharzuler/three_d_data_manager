@@ -13,6 +13,7 @@ from .src.data_creators.smooth_voxels_mask_data_creator import SmoothVoxelsMaskD
 from .src.data_creators.zxy_voxels_mask_data_creator import ZXYVoxelsMaskDataCreator, ZXYVoxelsExtraMaskDataCreator
 from .src.data_creators.two_d_vis_data_creator import TwoDVisDataCreator
 from .src.data_creators.three_d_vis_data_creator import ThreeDVisDataCreator
+from .src.data_creators.vertex_normals_data_creator import VertexNormalsDataCreator
 
 from .src.creation_args.h5_dataset_creation_args import H5DatasetCreationArgs
 from .src.creation_args.mesh_smoothing_creation_args import MeshSmoothingCreationArgs
@@ -23,6 +24,8 @@ from .src.creation_args.lbo_creation_args import LBOCreationArgs
 from .src.creation_args.voxelizing_creation_args import VoxelizingCreationArgs
 from .src.creation_args.two_d_vis_creation_args import TwoDVisualizationCreationArgs
 from .src.creation_args.three_d_vis_creation_args import ThreeDVisualizationCreationArgs
+from .src.creation_args.vertex_normals_creation_args import VertexNormalsCreationArgs
+
 
 from .src.dataset import Dataset
 

@@ -6,8 +6,7 @@ import open3d as o3d
 
 from .mesh_data_creator_base import DataCreatorBase
 from three_d_data_manager.src.file_paths import FilePaths
-from three_d_data_manager.src.utils import voxels_mesh_conversions_utils, os_utils, mesh_utils
-
+from three_d_data_manager.src.utils import os_utils
 
 class PointCloudDataCreator(DataCreatorBase):
     def __init__(self, source_path:str, sample_name:str, hirarchy_levels:int, creation_args=None) -> None:

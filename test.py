@@ -7,8 +7,8 @@
 import os
 
 from three_d_data_manager import Dataset
-from three_d_data_manager import ConvexMeshDataCreator, DicomDataCreator, H5DataCreator, LBOsDataCreator, MeshDataCreator, SmoothLBOMeshDataCreator, VoxelizedMeshDataCreator, XYZArrDataCreator, XYZVoxelsMaskDataCreator, XYZVoxelsExtraMaskDataCreator, SmoothVoxelsMaskDataCreator, SmoothVoxelsExtraMaskDataCreator, ZXYVoxelsMaskDataCreator, ZXYVoxelsExtraMaskDataCreator, TwoDVisDataCreator, ThreeDVisDataCreator, PointCloudDataCreator
-from three_d_data_manager import H5DatasetCreationArgs, MeshSmoothingCreationArgs, SmoothMeshCreationArgs, VoxelSmoothingCreationArgs, LBOCreationArgs, VoxelizingCreationArgs, TwoDVisualizationCreationArgs, ThreeDVisualizationCreationArgs, PointCloudCreationArgs
+from three_d_data_manager import ConvexMeshDataCreator, DicomDataCreator, H5DataCreator, LBOsDataCreator, MeshDataCreator, SmoothLBOMeshDataCreator, VoxelizedMeshDataCreator, XYZArrDataCreator, XYZVoxelsMaskDataCreator, XYZVoxelsExtraMaskDataCreator, SmoothVoxelsMaskDataCreator, SmoothVoxelsExtraMaskDataCreator, ZXYVoxelsMaskDataCreator, ZXYVoxelsExtraMaskDataCreator, TwoDVisDataCreator, ThreeDVisDataCreator, PointCloudDataCreator, VertexNormalsDataCreator
+from three_d_data_manager import H5DatasetCreationArgs, MeshSmoothingCreationArgs, SmoothMeshCreationArgs, VoxelSmoothingCreationArgs, LBOCreationArgs, VoxelizingCreationArgs, TwoDVisualizationCreationArgs, ThreeDVisualizationCreationArgs, PointCloudCreationArgs, VertexNormalsCreationArgs
 
 sample_name = "01" # "18"
 # create dataset
@@ -25,13 +25,13 @@ xyz_arr_data_creator = XYZArrDataCreator(None, sample_name, 2)
 dataset.add_sample(xyz_arr_data_creator)
 
 # add segmentation mask
-zxy_voxels_mask_arr_path = "/home/shahar/data/magix/manual_np_seg/CIR_30_NEW_to_CIR_30_NEW.npy" # os.path.join("/","home","shahar","projects","flow","_4DCTCostUnrolling-main","warped_seg_maps2", "from_18", "seg_20_18to18.npy") 
+zxy_voxels_mask_arr_path = "/home/shahar/data/magix/shahar_myo/ts_30/manual_np_shahar_myo_seg/CIR_30_NEW_myo_shahar_to_CIR_30_NEW_myo_shahar_lps.npy"#"/home/shahar/data/magix/manual_np_seg/CIR_30_NEW_to_CIR_30_NEW.npy" # os.path.join("/","home","shahar","projects","flow","_4DCTCostUnrolling-main","warped_seg_maps2", "from_18", "seg_20_18to18.npy") 
 zxy_voxels_mask_data_creator = ZXYVoxelsMaskDataCreator(zxy_voxels_mask_arr_path, sample_name, 2)
 dataset.add_sample(zxy_voxels_mask_data_creator)
 
 ################
 # add extra segmentation extra mask
-zxy_voxels_extra_mask_arr_path = "/home/shahar/data/magix/manual_np_seg/CIR_30_NEW_to_CIR_30_NEW.npy" # os.path.join("/","home","shahar","projects","flow","_4DCTCostUnrolling-main","warped_seg_maps2", "from_18", "seg_20_18to18.npy") 
+zxy_voxels_extra_mask_arr_path = "/home/shahar/data/magix/shell_from_lumen_xor_myo/shell_30.npy"#"/home/shahar/data/magix/manual_np_seg/CIR_30_NEW_to_CIR_30_NEW.npy" # os.path.join("/","home","shahar","projects","flow","_4DCTCostUnrolling-main","warped_seg_maps2", "from_18", "seg_20_18to18.npy") 
 zxy_voxels_extra_mask_data_creator = ZXYVoxelsExtraMaskDataCreator(zxy_voxels_extra_mask_arr_path, sample_name, 2)
 dataset.add_sample(zxy_voxels_extra_mask_data_creator)
 ################
@@ -96,6 +96,11 @@ dataset.add_sample(h5_dataset_data_creator)
 smooth_mesh_creation_args = SmoothMeshCreationArgs(lbos_path=dataset.file_paths.mesh_lbo_data[sample_name])
 smooth_lbo_mesh_data_creator = SmoothLBOMeshDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=smooth_mesh_creation_args)
 dataset.add_sample(smooth_lbo_mesh_data_creator)
+
+# compute vertex normals for future angular validation
+vertex_normals_creation_args = VertexNormalsCreationArgs(k_nn_for_normals_calc=50, geometry_path=dataset.file_paths.mesh_smooth[sample_name], orig_geometry_name="mesh_smooth") 
+vertex_normals_data_creator = VertexNormalsDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=vertex_normals_creation_args)
+dataset.add_sample(vertex_normals_data_creator)
 
 # create point cloud from smooth mesh
 point_cloud_creation_args = PointCloudCreationArgs(num_points=1E4, mesh_path=dataset.file_paths.mesh_smooth[sample_name], orig_mesh_name="mesh_smooth") 
