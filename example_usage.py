@@ -73,7 +73,7 @@ for sample_name, zxy_voxels_mask_arr_path in zip(timesteps, zxy_voxels_mask_arr_
     dataset.add_sample(smooth_lbo_mesh_data_creator)
 
     # compute vertex normals for future angular validation
-    vertex_normals_creation_args = VertexNormalsCreationArgs(k_nn_for_normals_calc=50, geometry_path=dataset.file_paths.mesh_smooth[sample_name], orig_geometry_name="mesh_smooth") 
+    vertex_normals_creation_args = VertexNormalsCreationArgs(geometry_path=dataset.file_paths.mesh_smooth[sample_name], orig_geometry_name="mesh_smooth") 
     vertex_normals_data_creator = VertexNormalsDataCreator(source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=vertex_normals_creation_args)
     dataset.add_sample(vertex_normals_data_creator)
 
