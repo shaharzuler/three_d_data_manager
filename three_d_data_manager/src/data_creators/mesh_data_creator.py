@@ -5,7 +5,7 @@ import numpy as np
 
 from .mesh_data_creator_base import MeshDataCreatorBase
 from three_d_data_manager.src.file_paths import FilePaths
-from three_d_data_manager.src.utils import voxels_mesh_conversions_utils, os_utils, mesh_utils, point_cloud_utils
+from three_d_data_manager.src.utils import voxels_mesh_conversions_utils, os_utils, mesh_utils
 
 
 class MeshDataCreator(MeshDataCreatorBase):

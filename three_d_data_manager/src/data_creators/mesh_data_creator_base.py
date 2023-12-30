@@ -5,7 +5,7 @@ import numpy as np
 
 
 from .data_creator_base import DataCreatorBase 
-from three_d_data_manager.src.utils import mesh_utils, point_cloud_utils #TODO expose poont cloud utils
+from three_d_data_manager.src.utils import mesh_utils
 
 
 
@@ -19,7 +19,3 @@ class MeshDataCreatorBase(DataCreatorBase):
 
     def save_mesh_default_filename(self, verts:np.ndarray, faces:np.ndarray) -> None:
         mesh_utils.write_off(self.mesh_path, verts, faces) 
-
-    def save_verts_normals(self, k):
-        """treats the verts as point cloud and saves normals to it calculated by pca and k-nn"""
-        point_cloud_utils.get_normals(self.verts, k)
