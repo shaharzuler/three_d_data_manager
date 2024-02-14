@@ -37,4 +37,4 @@ from .src.utils.sections_2d_visualization_utils import draw_2d_sections, draw_2d
 from .src.utils.voxels_mesh_conversions_utils import voxels_mask_to_mesh, Mesh2VoxelsConvertor
 from .src.utils.voxels_utils import zxy_to_xyz, xyz_to_zxy, voxel_smoothing, fill_holes, extract_segmentation_envelope
 from .src.utils.np_utils import save_arr
-from .src.utils.os_utils import write_config_file
+from .src.utils.os_utils import write_config_file, read_filepaths
