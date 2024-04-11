@@ -289,7 +289,7 @@ The convex hull mesh will be saved to: <br>
 The voxelized version of the convex hull mesh will be saved to: <br>
 `target/path/to/dataset/18/orig/voxels/xyz_convex_mesh_voxelized.npy` <br>
 
-### Compute and Store Vertex Normals
+### Compute and store vertex normals
 
 The normals are useful for error analysis by projecting vectors onto locally-radial and locally-tangential components.
 
