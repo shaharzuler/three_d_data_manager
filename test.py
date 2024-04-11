@@ -2,7 +2,7 @@
 # TODO read all args from config including dicom + seg data path (!)
 # TODO maybe user decides which format gets saved and which is created on the fly. (*)
 
-#TODO: vis 2D of extra mask, add extra mask to readme and test/run files, test fucntionallity
+#TODO: vis 2D of extra mask, add extra mask to readme and test/run files
 
 import os
 
