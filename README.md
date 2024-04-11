@@ -1,6 +1,7 @@
 # 3D Data Manager Library Guide
 
 The **three_d_data_manager** is a Python library designed to manage and process 3D data samples. It offers various functionalities for creating and processing datasets from 3D scans in DICOM format and their corresponding 3D boolean segmentation arrays. The library provides tools to convert segmentation arrays to multiple formats. Below is a detailed guide on how to use the library with example code snippets.
+
 ## Installation
 
 Build the **three_d_data_manager** package locally by running the following command:
@@ -9,6 +10,7 @@ pip install git+https://github.com/shaharzuler/three_d_data_manager
 ```
 
 ## usage
+
 To begin using the library, follow the steps outlined below.
 
 ### Initialize a new dataset
@@ -17,6 +19,7 @@ To create a new dataset, initialize the ```Dataset``` class with the target root
 ```python
 dataset = Dataset(target_root_dir="target/path/to/dataset")
 ```
+
 ### Add DICOM data and create 3D numpy arrays
 
 To add DICOM data and create 3D numpy arrays, use the ```DicomDataCreator``` and ```XYZArrDataCreator``` classes. First, create directories for multiple sample names (DICOM timesteps) and specify the DICOM files' source path:<br>
@@ -71,6 +74,7 @@ dataset.add_sample(xyz_voxels_mask_data_creator)
 The following numpy arrays will be created:<br>
 `target/path/to/dataset/18/orig/voxels/zxy_voxels_mask_raw.npy` <br>
 `target/path/to/dataset/18/orig/voxels/xyz_voxels_mask_raw.npy` <br>
+
 ### Perform voxel smoothing
 
 To close small holes and smooth the mask in voxel space using morphological opening and closing operations, utilize the ```SmoothVoxelsMaskDataCreator``` class. Define the smoothing parameters with a ```VoxelSmoothingCreationArgs``` instance:
@@ -94,6 +98,7 @@ The resulting numpy 3D mask will be saved to: <br>
 `target/path/to/dataset/18/orig/voxels/xyz_voxels_mask_smooth.npy` <br>
 A configuration file documenting the smoothening parameters will be saved to:<br>
 `target/path/to/dataset/18/orig/voxels/xyz_voxels_mask_smooth_config.json` <br>
+
 ### Create a mesh from the voxel mask
 
 To create a mesh from the voxel mask, use the ```MeshDataCreator``` class. You can also specify mesh creation arguments using the ```MeshSmoothingCreationArgs``` class:
@@ -164,7 +169,9 @@ LBO eigenvectors, eigenvalues and area weights will be saved to: <br>
 `target/path/to/dataset/18/orig/lbos/mesh_lbo_data.npz` <br>
 A configuration file documenting the mesh creation arguments will be saved to: <br>
 `target/path/to/dataset/18/orig/lbos/mesh_lbo_data_config.json` <br>
+
 ### Create an H5 format dataset
+
 To create an H5 format dataset, use the ```H5DataCreator``` class. Specify the dataset creation arguments with an instance of ```H5DatasetCreationArgs```:
 ```python
 h5_dataset_creation_args = H5DatasetCreationArgs(
@@ -184,7 +191,9 @@ dataset.add_sample(h5_dataset_data_creator)
 ```
 The H5 file will be saved to: <br>
 `target/path/to/dataset/18/orig/h5_datasets/mesh_dataset.h5df` <br>
+
 ### Smooth the mesh using LBOs
+
 To smooth the mesh using LBOs, utilize the ```SmoothLBOMeshDataCreator``` class. Specify the smoothing arguments with an instance of ```SmoothMeshCreationArgs```:
 ```python
 smooth_mesh_creation_args = SmoothMeshCreationArgs(
@@ -204,7 +213,9 @@ The smoothed mesh will be saved to: <br>
 `target/path/to/dataset/18/orig/meshes/smooth_mesh.off` <br>
 A configuration file documenting the mesh smoothening arguments will be saved to: <br>
 `target/path/to/dataset/18/orig/meshes/smooth_mesh_config.json` <br>
+
 ### Voxelize the smooth mesh
+
 To voxelize the smooth mesh, use the ```VoxelizedMeshDataCreator``` class. Specify the voxelization arguments with an instance of ```VoxelizingCreationArgs```:
 ```python
 smooth_mesh_voxelizing_args = VoxelizingCreationArgs(
@@ -222,7 +233,9 @@ dataset.add_sample(voxelized_smooth_mesh_data_creator)
 ```
 The voxelized version of the mesh, in the dimension of the original voxel mask, will be saved to: <br>
 `target/path/to/dataset/18/orig/voxels/xyz_smooth_mesh_voxelized.npy` <br>
+
 ### Calculate LBOs for the smoothed mesh
+
 ```python
 smooth_lbo_creation_args = LBOCreationArgs(
     num_LBOs=300, 
@@ -246,7 +259,9 @@ LBO eigenvectors, eigenvalues and area weights will be saved to: <br>
 `target/path/to/dataset/18/orig/lbos/mesh_smooth_lbo_data.npz`<br>
 A configuration file documenting the smoothening arguments  will be saved to: <br>
 `target/path/to/dataset/18/orig/lbos/mesh_smooth_lbo_data_config.json` <br>
+
 ### Create a convex hull of the smooth mesh and voxelize it
+
 ```python
 convex_mesh_data_creator = ConvexMeshDataCreator(
     source_path=None, 
@@ -274,11 +289,32 @@ The convex hull mesh will be saved to: <br>
 The voxelized version of the convex hull mesh will be saved to: <br>
 `target/path/to/dataset/18/orig/voxels/xyz_convex_mesh_voxelized.npy` <br>
 
+### Compute and Store Vertex Normals
+
+The normals are useful for error analysis by projecting vectors onto locally-radial and locally-tangential components.
+
+```python
+vertex_normals_creation_args = VertexNormalsCreationArgs(
+    geometry_path=dataset.file_paths.mesh_smooth[sample_name], orig_geometry_name="mesh_smooth"
+) 
+
+vertex_normals_data_creator = VertexNormalsDataCreator(
+    source_path=None, sample_name=sample_name, hirarchy_levels=2, creation_args=vertex_normals_creation_args
+    )
+
+dataset.add_sample(vertex_normals_data_creator)
+```
+The normals will be saved to: <br>
+`target/path/to/dataset/18/orig/vertices_normals/vertices_normals_from_mesh_smooth.npy` <br>
+A configuration file documenting the path of the mesh used for normal calculation will be saved to: <br>
+`target/path/to/dataset/18/orig/vertices_normals/vertices_normals_from_mesh_smooth_config.json` <br>
+
 ### Persistency
+
 To save the file paths of created data samples, in order to optionally start a future Dataset instance with, use the ```save_file_paths``` method of the ```Dataset``` class.
 
-
 ### Data visualization
+
 To visualize the data samples, use the ```TwoDVisDataCreator``` and ```ThreeDVisDataCreator``` classes.
 ```python
 two_d_visualization_args = TwoDVisualizationCreationArgs()
@@ -308,7 +344,9 @@ dataset.visualize_existing_data_3d(three_d_visualization_data_creator)
 `target/path/to/dataset/18/orig/2d_sections_visualization`<br>
 The mesh and first 6 LBOs will be saved to: <br>
 `target/path/to/dataset/18/orig/3d_visualization`<br>
+
 ### Getters:
+
 you can use the getters to load the files from the dataset:
 ```python
 xyz_voxels_mask_arr = dataset.get_xyz_voxels_mask(sample_name)
@@ -327,6 +365,7 @@ convex_point_cloud = dataset.get_convex_point_cloud(sample_name)
 ```
 
 ## Conclusion
+
 The final result for timestep 18 will be as follows:
 <pre>
 18
@@ -413,6 +452,13 @@ The final result for timestep 18 will be as follows:
     │   ├── point_cloud_from_mesh.ply
     │   ├── point_cloud_from_mesh_smooth_config.json
     │   └── point_cloud_from_mesh_smooth.ply
+    └── vertices_normals
+    │   ├── vertices_normals_from_mesh.npy
+    │   ├── vertices_normals_from_mesh_config.json
+    │   ├── vertices_normals_from_mesh_smooth.npy
+    │   ├── vertices_normals_from_mesh_smooth_config.json
+    │   ├── vertices_normals_from_mesh_convex.npy
+    │   ├── vertices_normals_from_mesh_convex_config.json
     └── voxels
         ├── xyz_arr_raw.npy
         ├── xyz_convex_mesh_voxelized.npy
