@@ -10,7 +10,7 @@ from three_d_data_manager.src.file_paths import FilePaths
 from three_d_data_manager.src.utils import os_utils
 
 
-class VertexNormalsDataCreator(DataCreatorBase): # TODO add to readme and example usage. todo add visualization?
+class VertexNormalsDataCreator(DataCreatorBase):
     def __init__(self, source_path:str, sample_name:str, hirarchy_levels:int, creation_args=None) -> None:
         super().__init__(source_path, sample_name, hirarchy_levels, creation_args=creation_args)
         self.default_dirname = "vertices_normals"
