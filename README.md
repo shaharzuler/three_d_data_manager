@@ -9,7 +9,7 @@ Build the **three_d_data_manager** package locally by running the following comm
 pip install git+https://github.com/shaharzuler/three_d_data_manager
 ```
 
-## usage
+## Usage
 
 To begin using the library, follow the steps outlined below.
 
